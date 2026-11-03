@@ -151,7 +151,7 @@ button:disabled{opacity:.4;cursor:default}
 .dexs .dex:first-child{padding-top:4px}
 .exhead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding-bottom:14px;margin-bottom:8px;box-shadow:inset 0 -1px 0 var(--line)}
 .sets{display:flex;flex-direction:column}
-.sets .sw-wrap{border-radius:10px}
+.sets .sw-acts{border-radius:10px}
 .sets .sw-row{background:transparent;border-radius:10px}
 .sets .sw-wrap.sw .sw-row{background:var(--bg)}
 .sets .sw-acts button{min-width:68px}
@@ -196,8 +196,8 @@ button:disabled{opacity:.4;cursor:default}
 .handle{width:36px;height:44px;flex:none;border:0;background:none;color:var(--dim);display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
 .chk{width:26px;height:26px;flex:none;border:2px solid var(--dim);border-radius:7px;background:transparent;padding:0;color:var(--on-accent);display:flex;align-items:center;justify-content:center}
 .chk.on{border:0;background:var(--accent)}
-.shift{transition:transform .18s ease}
-.dragging{position:relative;z-index:5;background:var(--card2)!important;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.shift{transition:transform .18s ease;will-change:transform}
+.dragging{will-change:transform;position:relative;z-index:5;background:var(--card2)!important;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 
 /* sheets */
 #sheet{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;justify-content:flex-end}
@@ -267,20 +267,20 @@ button:disabled{opacity:.4;cursor:default}
 .themes button.on .sw{box-shadow:0 0 0 2px var(--text)}
 .sw i{height:12px;border-radius:4px}
 .confirm{display:flex;flex-direction:column;gap:8px;background:var(--card);border-radius:16px;padding:14px}
-.sw-wrap{position:relative;border-radius:16px;overflow:hidden;touch-action:pan-y}
-.sw-acts{position:absolute;top:0;right:0;bottom:0;display:flex;visibility:hidden}
+.sw-wrap{position:relative;overflow:hidden;touch-action:pan-y}
+.sw-acts{position:absolute;top:0;right:0;bottom:0;display:flex;visibility:hidden;border-radius:16px;overflow:hidden}
 .sw-wrap.sw .sw-acts{visibility:visible}
 .sw-acts button{border:0;min-width:74px;padding:0 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;background:var(--card2);color:var(--text)}
 .sw-acts button.del{background:var(--text);color:var(--bg)}
-.sw-row{position:relative;z-index:1;transition:transform .32s cubic-bezier(.22,1,.36,1);touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.sw-row{position:relative;z-index:1;border-radius:16px;transition:transform .32s cubic-bezier(.22,1,.36,1);touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .sw-row *{-webkit-user-drag:none}
 .sw-acts button{transition:min-width .15s ease}
 .sw-wrap.full .sw-acts button.del{min-width:100%}
 .sw-wrap.full .sw-acts button:not(.del){display:none}
 .sw-wrap.gone{transition:height .2s ease,opacity .2s ease;opacity:0}
 .sw-row.nt{transition:none}
-.sw-wrap.sw .sw-row{will-change:transform}
-.sw-wrap{-webkit-mask-image:-webkit-radial-gradient(white,black)}
+.sw-row.wc{will-change:transform}
+.sw-wrap.dragging{border-radius:16px}
 #toast{position:fixed!important;z-index:45!important;left:0;right:0;margin:0 auto;max-width:480px;bottom:84px;padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));opacity:0;transform:translateY(16px) scale(.97);transition:opacity .22s ease,transform .34s cubic-bezier(.22,1,.36,1);pointer-events:none}
 #toast.on{opacity:1;transform:none;pointer-events:auto}
 .toast{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 6px 0 16px;border-radius:14px;background:var(--text);color:var(--bg);font-size:15px;box-shadow:0 12px 32px rgba(0,0,0,.3)}
@@ -2250,7 +2250,8 @@ var sw = null, openSw = null;
 function closeSw() { if (openSw) { var w = openSw, r = w.querySelector('.sw-row'); if (r) { r.classList.remove('nt'); r.style.transform = ''; } openSw = null; setTimeout(function () { if (openSw !== w) w.classList.remove('sw'); }, 220); } }
 function swBegin(w, ev) {
   var acts = w.querySelector('.sw-acts'), max = acts.offsetWidth, open = openSw === w;
-  sw = { w: w, row: w.querySelector('.sw-row'), x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, max: max, width: w.offsetWidth, base: open ? -max : 0, dec: false, h: false, x: open ? -max : 0, pts: [], del: !!acts.querySelector('.del'), raf: 0, full: false };
+  var row = w.querySelector('.sw-row'); row.classList.add('wc');
+  sw = { w: w, row: row, x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, max: max, width: w.offsetWidth, base: open ? -max : 0, dec: false, h: false, x: open ? -max : 0, pts: [], del: !!acts.querySelector('.del'), raf: 0, full: false };
 }
 function swPaint(t) {
   t.raf = 0;
@@ -2271,7 +2272,7 @@ document.addEventListener('pointermove', function (ev) {
   if (!sw.dec) {
     if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
     sw.dec = true; sw.h = Math.abs(dx) > Math.abs(dy) * 1.1;
-    if (!sw.h) { sw = null; return; }
+    if (!sw.h) { sw.row.classList.remove('wc'); sw = null; return; }
     if (openSw && openSw !== sw.w) closeSw();
     sw.w.classList.add('sw'); sw.row.classList.add('nt');
     sw.x0 = ev.clientX - (sw.x - sw.base);
@@ -2284,7 +2285,7 @@ document.addEventListener('pointermove', function (ev) {
   if (x > 0) x = x / 4;
   if (x < -sw.max) x = -sw.max + (x + sw.max) * (sw.del ? 0.9 : 0.3);
   sw.x = Math.max(sw.del ? -sw.width : -sw.max - 40, x);
-  if (!sw.raf) { var t = sw; t.raf = requestAnimationFrame(function () { swPaint(t); }); }
+  swPaint(sw);
   dragMoved = true;
 });
 document.addEventListener('touchmove', function (ev) {
@@ -2292,9 +2293,9 @@ document.addEventListener('touchmove', function (ev) {
 }, { passive: false });
 function endSw(ev) {
   if (!sw || ev.pointerId !== sw.id) return;
-  var t = sw; sw = null; if (!t.h) return;
-  if (t.raf) { cancelAnimationFrame(t.raf); t.raf = 0; }
+  var t = sw; sw = null; if (!t.h) { t.row.classList.remove('wc'); return; }
   swPaint(t);
+  setTimeout(function () { if (!sw || sw.row !== t.row) t.row.classList.remove('wc'); }, 400);
   setTimeout(function () { dragMoved = false; }, 0);
   var v = 0, p = t.pts; if (p.length > 1) { var a = p[0], b = p[p.length - 1]; if (b.t > a.t) v = (b.x - a.x) / (b.t - a.t); }
   // force a style flush so the snap animates from the current position
