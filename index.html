@@ -237,6 +237,9 @@ button:disabled{opacity:.4;cursor:default}
 .setchips b.w{color:var(--muted);font-weight:400}
 .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 12px;background:var(--card);font-size:14px;font-weight:700}
 .pr{border-radius:6px;padding:3px 6px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700}
+.titlebtn{border:0;background:none;padding:0;margin:0;color:var(--text);text-align:left;display:inline-flex;align-items:center;gap:8px;align-self:flex-start;cursor:pointer}
+.titlebtn .tchev{display:inline-flex;color:var(--muted);transition:transform .28s cubic-bezier(.22,1,.36,1)}
+.titlebtn.open .tchev{transform:rotate(180deg)}
 .unit{font-size:.58em;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
 .rl{display:inline-grid;overflow:hidden;vertical-align:bottom}
 .rl>span{grid-area:1/1}
@@ -1106,11 +1109,11 @@ function vHome() {
   } else {
     var link = sp ? '<button class="row between divbot" data-a="tab" data-t="splits" style="border:0;background:none;color:var(--text);padding-left:0;padding-right:0;text-align:left;margin:-6px 0 -2px;min-height:44px"><span class="col g2"><span class="small muted">Current split</span><b style="font-size:15px">' + esc(sp.name) + '</b></span><span class="muted">' + ic('chev', 18) + '</span></button>' : '';
     var main = wk ?
-      (sp.workouts.length > 1 ? '<div class="chips" role="radiogroup" aria-label="Workout">' + sp.workouts.map(function (x) { var on = x.id === wk.id; return '<button class="chip' + (on ? ' on' : '') + '" style="display:inline-flex;align-items:center;min-height:32px;font-size:14px;font-weight:600;padding:0 12px;background:' + (on ? '' : 'var(--card2)') + '" role="radio" aria-checked="' + on + '"' + (x.id === lastT ? ' aria-label="' + esc(x.name) + '. Last trained"' : '') + ' data-a="pickW" data-w="' + x.id + '">' + (x.id === lastT ? '<span style="display:inline-flex;margin-right:5px;opacity:.7" title="Last trained">' + ic('history', 13, 2.2) + '</span>' : '') + esc(x.name) + '</button>'; }).join('') + '</div>' : '') +
-      '<div class="col g6"><span class="eyebrow">Next up</span><h1 class="h1 xl">' + esc(wk.name) + '</h1><span class="muted" style="font-size:15px">' + pl(wk.items.length, 'exercise') + SEP + estMin(wk.items) + ' min</span></div>' +
+      '<div class="col g6"><span class="eyebrow">Next up</span>' + (sp.workouts.length > 1 ? '<button class="h1 xl titlebtn' + (U.homeOpen ? ' open' : '') + '" data-a="homeToggle" aria-expanded="' + !!U.homeOpen + '">' + esc(wk.name) + '<span class="tchev">' + ic('down', 22, 2.4) + '</span></button>' : '<h1 class="h1 xl">' + esc(wk.name) + '</h1>') + '<span class="muted" style="font-size:15px">' + pl(wk.items.length, 'exercise') + SEP + estMin(wk.items) + ' min</span></div>' +
+      (sp.workouts.length > 1 && U.homeOpen ? '<div class="chips" role="radiogroup" aria-label="Workout">' + sp.workouts.map(function (x) { var on = x.id === wk.id; return '<button class="chip' + (on ? ' on' : '') + '" style="display:inline-flex;align-items:center;min-height:32px;font-size:14px;font-weight:600;padding:0 12px;background:' + (on ? '' : 'var(--card2)') + '" role="radio" aria-checked="' + on + '"' + (x.id === lastT ? ' aria-label="' + esc(x.name) + '. Last trained"' : '') + ' data-a="pickW" data-w="' + x.id + '">' + (x.id === lastT ? '<span style="display:inline-flex;margin-right:5px;opacity:.7" title="Last trained">' + ic('history', 13, 2.2) + '</span>' : '') + esc(x.name) + '</button>'; }).join('') + '</div>' : '') +
       '<div class="col g8"><button class="btn primary block" data-a="startNext">Start</button></div>' :
       '<div class="col g6"><span class="eyebrow">No split</span><h1 class="h1 xl">Pick a split</h1></div><div class="col g8"><button class="btn primary block" data-a="tab" data-t="splits">Splits</button></div>';
-    hero = '<section class="card pad col g14">' + link + main + '</section>';
+    hero = '<section class="card pad col g14 hero">' + link + main + '</section>';
   }
   var ws = weekStart(Date.now()), today = dayStart(Date.now()), dots = '';
   for (var i = 0; i < 7; i++) {
@@ -1281,6 +1284,15 @@ function shImport() {
   return '<div class="col g6"><h2 class="h2">Replace all data?</h2><span class="muted" style="font-size:15px">' + pl(d.workouts.length, 'workout') + SEP + pl(d.splits.length, 'split') + (d.exported ? SEP + dDM(Date.parse(d.exported)) : '') + '</span></div>' +
     '<div class="grid2"><button class="btn block" style="background:var(--card2)" data-a="closeSheet">No</button><button class="btn block" style="background:var(--text);color:var(--bg)" data-a="importYes">Yes</button></div>';
 }
+function shDraftPick() {
+  var d = U.draft, sp = d && splitById(d.splitId); if (!sp) return '';
+  var nx = nextWorkout(sp);
+  var rows = sp.workouts.map(function (w) {
+    var on = w.id === d.tplId;
+    return '<button class="opt' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-a="draftPickW" data-w="' + w.id + '" style="min-height:62px"><span class="radio"></span><span class="col g4 f1"><b style="font-size:17px">' + esc(w.name) + '</b><span class="small muted">' + pl(w.items.length, 'exercise') + SEP + estMin(w.items) + ' min</span></span>' + (nx && nx.id === w.id ? '<span class="tag">Next</span>' : '') + '</button>';
+  }).join('');
+  return '<div class="col g4"><span class="eyebrow">' + esc(sp.name) + '</span><h2 class="h2">Choose workout</h2></div><div class="col g6" role="radiogroup" aria-label="Workout">' + rows + '</div>';
+}
 function shDelSplit() {
   var sp = splitById(U.delSplit);
   return '<h2 class="h2">Delete ' + esc(sp ? sp.name : 'split') + '?</h2><div class="grid2"><button class="btn block" style="background:var(--card2)" data-a="closeSheet">No</button><button class="btn block" style="background:var(--text);color:var(--bg)" data-a="splitDelYes">Yes</button></div>';
@@ -1311,7 +1323,7 @@ function shNote() {
     '<textarea id="noteTxt" class="ta" data-in="noteTxt" rows="5" placeholder="Write your note">' + esc(c.text || '') + '</textarea>' +
     (c.nid ? '<div class="grid2"><button class="btn block" style="background:var(--card2)" data-a="noteDel">Delete</button><button class="btn primary block" style="min-height:48px;font-size:16px" data-a="noteSave">Save</button></div>' : '<button class="btn primary block" data-a="noteSave">Save</button>');
 }
-var SHEETS = { imp: shImport, cardio: shCardio, noteEx: shNoteEx, note: shNote, pick: shPick, delSplit: shDelSplit, busy: shBusy, overview: shOverview, swap: shSwap, variant: shVariant, end: shEnd, logw: shLogW };
+var SHEETS = { dpick: shDraftPick, imp: shImport, cardio: shCardio, noteEx: shNoteEx, note: shNote, pick: shPick, delSplit: shDelSplit, busy: shBusy, overview: shOverview, swap: shSwap, variant: shVariant, end: shEnd, logw: shLogW };
 
 /* ---------- views: library ---------- */
 function searchLib(q, g, eq) {
@@ -1533,7 +1545,7 @@ function vPreview() {
     return swipeRow(inner, swAct('draftSwap', 'data-i="' + i + '"', 'list', 'Swap') + swAct('draftDel', 'data-i="' + i + '"', 'trash', 'Delete', 'del'));
   }).join('');
   return (U.stack.length ? '<button class="backlink" data-a="back">' + ic('back', 22) + 'Back</button>' : '') +
-    '<div class="col g6">' + (sp ? '<span class="eyebrow">' + esc(sp.name) + '</span>' : '') + '<h1 class="h1 xl">' + esc(d.tplId ? d.name : 'New workout') + '</h1>' + (d.items.length ? '<span class="muted" style="font-size:15px">' + pl(d.items.length, 'exercise') + SEP + estMin(d.items) + ' min</span>' : '') + '</div>' +
+    '<div class="col g6">' + (sp ? '<span class="eyebrow">' + esc(sp.name) + '</span>' : '') + (sp && sp.workouts.length > 1 ? '<button class="h1 xl titlebtn" data-a="draftPick">' + esc(d.tplId ? d.name : 'New workout') + '<span class="tchev">' + ic('down', 22, 2.4) + '</span></button>' : '<h1 class="h1 xl">' + esc(d.tplId ? d.name : 'New workout') + '</h1>') + (d.items.length ? '<span class="muted" style="font-size:15px">' + pl(d.items.length, 'exercise') + SEP + estMin(d.items) + ' min</span>' : '') + '</div>' +
     (rows ? '<div class="col g6">' + rows + '</div>' : '') +
     '<button class="btn block" style="background:var(--card)" data-a="openLib" data-m="draft">' + ic('plus', 18, 2.2) + 'Add exercise</button>' +
     '<div class="stickybar"><button class="btn primary block" data-a="draftStart">' + (first ? 'Start ' + esc(exName(first.exId)) : 'Start workout') + '</button></div>';
@@ -1819,7 +1831,13 @@ var H = {
     if (pick === 3) { U.stack = ['home']; U.route = 'tpl'; U.tplSplit = sp.id; U.tplId = sp.workouts[0].id; U.tplOpen = null; render(); }
     else tab('home');
   },
-  pickW: function (d) { var sp = activeSplit(); U.pickW = nextWorkout(sp) && nextWorkout(sp).id === d.w ? null : d.w; render(); },
+  pickW: function (d) { var sp = activeSplit(); morph('#screen .hero', function () { U.pickW = nextWorkout(sp) && nextWorkout(sp).id === d.w ? null : d.w; U.homeOpen = false; render(); }); },
+  draftPick: function () { U.sheet = 'dpick'; render(); },
+  draftPickW: function (d) {
+    var sp = splitById(U.draft.splitId), w = sp && sp.workouts.filter(function (x) { return x.id === d.w; })[0]; if (!w) return;
+    haptic(); U.draft = { name: w.name, splitId: sp.id, tplId: w.id, items: clone(w.items) }; U.sheet = null; render(); scrTop();
+  },
+  homeToggle: function () { morph('#screen .hero', function () { U.homeOpen = !U.homeOpen; render(); }); },
   startNext: function () { var sp = activeSplit(), wk = pickedWorkout(sp); if (S.active) { H.resumeOv(); return; } U.draft = { name: wk.name, splitId: sp.id, tplId: wk.id, items: clone(wk.items) }; go('preview'); },
   startEmpty: function () { if (S.active) { U.sheet = 'busy'; render(); return; } U.draft = { name: 'Workout', splitId: null, tplId: null, items: [] }; go('preview'); H.openLib({ m: 'draft' }); },
   resume: function () { U.stack = []; U.route = 'workout'; U.sheet = null; render(); scrTop(); },
@@ -2193,7 +2211,7 @@ var H = {
 
 document.addEventListener('click', function (ev) {
   if (hapEl && hapEl.contains(ev.target)) return;
-  if (Date.now() < lpUntil) { ev.preventDefault(); return; }
+  if (lpSwallow) { lpSwallow = false; if (!ev.target.closest('.ctxm')) { ev.preventDefault(); return; } }
   if (dragMoved) { dragMoved = false; return; }
   if (U.undo && !ev.target.closest('#toast')) { U.undo = null; toastSync(); }
   if (openSw && !ev.target.closest('.sw-acts')) { var inRow = ev.target.closest('.sw-wrap'); closeSw(); if (inRow) return; }
@@ -2350,7 +2368,7 @@ document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
 
 /* ---------- long-press menu: same actions as the swipe ---------- */
-var lp = null, lpUntil = 0;
+var lp = null, lpSwallow = false;
 function ctxClose() { var c = $('#ctx'); if (!c) return; c.classList.add('out'); setTimeout(function () { c.remove(); }, 160); }
 function ctxOpen(w) {
   var acts = w.querySelectorAll('.sw-acts button'); if (!acts.length) return;
@@ -2373,10 +2391,11 @@ document.addEventListener('pointerdown', function (ev) {
   var w = ev.target.closest('.sw-wrap'); if (!w || ev.target.closest('[data-drag],input,textarea,.sw-acts') || $('#ctx')) return;
   if (ev.pointerType === 'mouse' && ev.button !== 0) return;
   lp = { w: w, x: ev.clientX, y: ev.clientY, id: ev.pointerId, fired: false };
-  lp.t = setTimeout(function () { if (!lp || lp.w !== w) return; lp.fired = true; sw = null; haptic(); ctxOpen(w); }, 480);
+  lp.t = setTimeout(function () { if (!lp || lp.w !== w) return; lp.fired = true; sw = null; haptic(); ctxOpen(w); lpSwallow = true; setTimeout(function () { lpSwallow = false; }, 1500); }, 480);
 });
 document.addEventListener('pointermove', function (ev) { if (lp && !lp.fired && ev.pointerId === lp.id && Math.abs(ev.clientX - lp.x) + Math.abs(ev.clientY - lp.y) > 8) { clearTimeout(lp.t); lp = null; } });
-function lpEnd(ev) { if (!lp || ev.pointerId !== lp.id) return; clearTimeout(lp.t); if (lp.fired) lpUntil = Date.now() + 450; lp = null; }
+function lpEnd(ev) { if (!lp || ev.pointerId !== lp.id) return; clearTimeout(lp.t); lp = null; }
+document.addEventListener('pointerdown', function (ev) { if (ev.target.closest && ev.target.closest('#ctx')) lpSwallow = false; }, true);
 document.addEventListener('pointerup', lpEnd);
 document.addEventListener('pointercancel', lpEnd);
 document.addEventListener('contextmenu', function (ev) { if (ev.target.closest('.sw-wrap')) ev.preventDefault(); });
