@@ -166,8 +166,7 @@ button:disabled{opacity:.4;cursor:default}
 .sets{display:flex;flex-direction:column}
 .sets .sw-acts{border-radius:10px}
 .sets .sw-row{background:transparent;border-radius:10px}
-.sets .sw-wrap.sw .sw-row{background:var(--bg)}
-.sets .sw-acts button{min-width:68px}
+.sets .sa{width:68px}
 .srow{display:grid;grid-template-columns:28px 1fr 30px;align-items:center;gap:8px;padding:0 8px;border-radius:10px;min-height:40px}
 .srow.cur{background:var(--card);box-shadow:inset 0 0 0 1.5px var(--text);min-height:44px}
 .srow.sel{background:var(--card)}
@@ -281,14 +280,14 @@ button:disabled{opacity:.4;cursor:default}
 .sw i{height:12px;border-radius:4px}
 .confirm{display:flex;flex-direction:column;gap:8px;background:var(--card);border-radius:16px;padding:14px}
 .sw-wrap{position:relative;overflow:hidden;touch-action:pan-y}
-.sw-acts{position:absolute;top:0;right:0;bottom:0;display:flex;visibility:hidden;border-radius:16px;overflow:hidden}
-.sw-wrap.sw .sw-acts{visibility:visible}
-.sw-acts button{border:0;min-width:74px;padding:0 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;background:var(--card2);color:var(--text)}
+.sw-acts{position:absolute;top:0;right:0;bottom:0;width:0;display:flex;visibility:hidden;border-radius:16px;overflow:hidden;transition:width .32s cubic-bezier(.22,1,.36,1)}
+.sw-acts.nt{transition:none}
+.sw-wrap.swiping .sw-acts{visibility:visible}
+.sw-acts button{border:0;flex:1 1 0;min-width:0;padding:0;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;font-size:12px;font-weight:700;background:var(--card2);color:var(--text)}
 .sw-acts button.del{background:var(--text);color:var(--bg)}
 .sw-row{position:relative;z-index:1;border-radius:16px;transition:transform .32s cubic-bezier(.22,1,.36,1);touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .sw-row *{-webkit-user-drag:none}
-.sw-acts button{transition:min-width .15s ease}
-.sw-wrap.full .sw-acts button.del{min-width:100%}
+.sa{width:74px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .sw-wrap.full .sw-acts button:not(.del){display:none}
 .sw-wrap.gone{transition:height .2s ease,opacity .2s ease;opacity:0}
 .sw-row.nt{transition:none}
@@ -325,7 +324,7 @@ button:disabled{opacity:.4;cursor:default}
 button{transition:transform .14s cubic-bezier(.22,1,.36,1),filter .14s ease,background-color .2s ease,color .2s ease}
 button:active{transform:scale(.96);filter:brightness(.9)}
 .item:active,.ovrow .lmain:active,.lrow .lmain:active,.cb:active,.wkrow:active{transform:scale(.985)}
-.sw-wrap.sw button:active,.handle:active,.shbg:active,#tabs button:active{transform:none}
+.sw-wrap.swiping button:active,.handle:active,.shbg:active,#tabs button:active{transform:none}
 #tabs button:active .wc,#tabs button:active svg{transform:scale(.9)}
 #tabs button svg,#tabs .wc{transition:transform .14s ease}
 .circle.pop{animation:pop .42s cubic-bezier(.22,1,.36,1)}
@@ -414,8 +413,6 @@ b,strong,.b{font-weight:600}
 :root[data-glass] .item[style*="background:var(--card2)"]{background:var(--g-card2)!important}
 :root[data-glass] :is(.card.pad,.rest,.sheet){-webkit-backdrop-filter:blur(18px) saturate(1.35);backdrop-filter:blur(18px) saturate(1.35)}
 :root[data-glass] .sheet{background:color-mix(in srgb,var(--card) 82%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
-:root[data-glass] .sw-wrap.sw .sw-row{background:var(--bg)}
-:root[data-glass] .sets .sw-wrap.sw .sw-row{background:var(--bg)}
 :root[data-glass] #aura i:nth-child(1){opacity:.34}
 :root[data-glass] #aura i:nth-child(3){opacity:.22}
 :root[data-glass] .btn:not(.primary):not(.ghost){background:color-mix(in srgb,var(--card2) 55%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.07)}
@@ -964,7 +961,7 @@ function hAnim(el, oh, fade) {
   setTimeout(function () { if (el._ht !== tk) return; el.style.height = ''; el.classList.remove('mh', 'grow', 'shrink'); }, 340);
 }
 function swipeRow(inner, acts, attrs) { return '<div class="sw-wrap"' + (attrs || '') + '><div class="sw-acts">' + acts + '</div><div class="sw-row">' + inner + '</div></div>'; }
-function swAct(a, attrs, icon, label, cls) { return '<button class="' + (cls || '') + '" data-a="' + a + '" ' + attrs + '>' + ic(icon, 18) + label + '</button>'; }
+function swAct(a, attrs, icon, label, cls) { return '<button class="' + (cls || '') + '" data-a="' + a + '" ' + attrs + '><span class="sa">' + ic(icon, 18) + label + '</span></button>'; }
 function tabsHtml() {
   var t = [['home', 'Home', 'home'], ['splits', 'Splits', 'list'], ['workout'], ['progress', 'Progress', 'chart'], ['settings', 'Settings', 'gear']];
   var cur = curTab(), a = S.active;
@@ -2260,15 +2257,17 @@ document.addEventListener('pointercancel', endDrag);
 
 /* ---------- swipe to reveal ---------- */
 var sw = null, openSw = null;
-function closeSw() { if (openSw) { var w = openSw, r = w.querySelector('.sw-row'); if (r) { r.classList.remove('nt'); r.style.transform = ''; } openSw = null; setTimeout(function () { if (openSw !== w) w.classList.remove('sw'); }, 220); } }
+var SWGAP = 6;
+function closeSw() { if (openSw) { var w = openSw, r = w.querySelector('.sw-row'), ac = w.querySelector('.sw-acts'); if (r) { r.classList.remove('nt'); r.style.transform = ''; } if (ac) { ac.classList.remove('nt'); ac.style.width = '0px'; } openSw = null; setTimeout(function () { if (openSw !== w) { w.classList.remove('swiping'); if (r) r.classList.remove('wc'); } }, 340); } }
 function swBegin(w, ev) {
-  var acts = w.querySelector('.sw-acts'), max = acts.offsetWidth, open = openSw === w;
-  var row = w.querySelector('.sw-row'); row.classList.add('wc');
-  sw = { w: w, row: row, x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, max: max, width: w.offsetWidth, base: open ? -max : 0, dec: false, h: false, x: open ? -max : 0, pts: [], del: !!acts.querySelector('.del'), raf: 0, full: false };
+  var acts = w.querySelector('.sw-acts'), sa = acts.querySelector('.sa'), max = acts.children.length * (sa ? sa.offsetWidth || 74 : 74) + SWGAP, open = openSw === w;
+  var row = w.querySelector('.sw-row');
+  sw = { w: w, row: row, acts: acts, x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, max: max, width: w.offsetWidth, base: open ? -max : 0, dec: false, h: false, x: open ? -max : 0, pts: [], del: !!acts.querySelector('.del'), raf: 0, full: false };
 }
 function swPaint(t) {
   t.raf = 0;
   t.row.style.transform = 'translate3d(' + t.x + 'px,0,0)';
+  t.acts.style.width = Math.max(0, -t.x - SWGAP) + 'px';
   var f = t.del && t.x < -t.width * 0.6;
   if (f !== t.full) { t.full = f; t.w.classList.toggle('full', f); }
 }
@@ -2285,9 +2284,9 @@ document.addEventListener('pointermove', function (ev) {
   if (!sw.dec) {
     if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
     sw.dec = true; sw.h = Math.abs(dx) > Math.abs(dy) * 1.1;
-    if (!sw.h) { sw.row.classList.remove('wc'); sw = null; return; }
+    if (!sw.h) { sw = null; return; }
     if (openSw && openSw !== sw.w) closeSw();
-    sw.w.classList.add('sw'); sw.row.classList.add('nt');
+    sw.w.classList.add('swiping'); sw.row.classList.add('nt', 'wc'); sw.acts.classList.add('nt');
     sw.x0 = ev.clientX - (sw.x - sw.base);
     try { sw.row.setPointerCapture(ev.pointerId); } catch (e) {}
     dx = ev.clientX - sw.x0;
@@ -2306,18 +2305,17 @@ document.addEventListener('touchmove', function (ev) {
 }, { passive: false });
 function endSw(ev) {
   if (!sw || ev.pointerId !== sw.id) return;
-  var t = sw; sw = null; if (!t.h) { t.row.classList.remove('wc'); return; }
+  var t = sw; sw = null; if (!t.h) return;
   swPaint(t);
-  setTimeout(function () { if (!sw || sw.row !== t.row) t.row.classList.remove('wc'); }, 400);
   setTimeout(function () { dragMoved = false; }, 0);
   var v = 0, p = t.pts; if (p.length > 1) { var a = p[0], b = p[p.length - 1]; if (b.t > a.t) v = (b.x - a.x) / (b.t - a.t); }
   // force a style flush so the snap animates from the current position
   void t.row.offsetWidth;
-  t.row.classList.remove('nt');
+  t.row.classList.remove('nt'); t.acts.classList.remove('nt');
   if (t.full || (t.del && v < -1.6 && t.x < -t.max)) {
     var btn = t.w.querySelector('.sw-acts .del');
     t.w.classList.add('full');
-    t.row.style.transform = 'translate3d(' + (-t.width) + 'px,0,0)';
+    t.row.style.transform = 'translate3d(' + (-t.width) + 'px,0,0)'; t.acts.style.width = t.width + 'px';
     t.w.style.height = t.w.offsetHeight + 'px';
     requestAnimationFrame(function () { t.w.classList.add('gone'); t.w.style.height = '0px'; });
     openSw = null;
@@ -2326,9 +2324,9 @@ function endSw(ev) {
   }
   var open = v < -0.3 ? t.x < -12 : v > 0.3 ? false : t.x < -t.max / 2;
   t.w.classList.remove('full');
-  t.row.style.transform = open ? 'translate3d(' + (-t.max) + 'px,0,0)' : '';
+  t.row.style.transform = open ? 'translate3d(' + (-t.max) + 'px,0,0)' : ''; t.acts.style.width = open ? (t.max - SWGAP) + 'px' : '0px';
   openSw = open ? t.w : null;
-  if (!open) setTimeout(function () { if (openSw !== t.w) t.w.classList.remove('sw'); }, 300);
+  if (!open) setTimeout(function () { if (openSw !== t.w) { t.w.classList.remove('swiping'); t.row.classList.remove('wc'); } }, 340);
 }
 document.addEventListener('pointerup', endSw);
 document.addEventListener('pointercancel', endSw);
