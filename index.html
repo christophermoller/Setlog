@@ -226,8 +226,8 @@ button:disabled{opacity:.4;cursor:default}
 .dots i{width:14px;height:14px;border-radius:7px;background:var(--card2)}
 .dots i.d{background:var(--accent)}.dots i.t{background:transparent;box-shadow:inset 0 0 0 2px var(--text)}
 .dots i.d.t{background:var(--accent)}
-.divtop{box-shadow:inset 0 1px 0 var(--line);padding-top:10px}
-.divbot{box-shadow:inset 0 -1px 0 var(--line);padding-bottom:12px}
+.divtop{padding-top:6px}
+.divbot{padding-bottom:6px}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tiles.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .tile{background:var(--card);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -297,7 +297,15 @@ button:disabled{opacity:.4;cursor:default}
 #mini{padding:0 max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px))}
 .mini{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:10px 14px;border:0;border-radius:16px;background:var(--card2);color:var(--text);text-align:left}
 .mini-rest{font-size:22px;font-weight:700;color:var(--accent-text)}
-#tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:6px max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--bg);box-shadow:inset 0 1px 0 var(--line)}
+#tabs{position:absolute;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:6px max(12px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 .5px 0 rgba(255,255,255,.14)}
+#tabs button:not(.wbtn) svg{box-sizing:content-box;padding:3px 16px;margin:-3px 0;border-radius:14px;transition:background .2s ease}
+#tabs button[aria-current="page"]:not(.wbtn) svg{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.scr{padding-bottom:calc(24px + var(--tabh,0px))!important}
+.stickybar{bottom:calc(12px + var(--tabh,0px))!important}
+#tbar{position:absolute;left:0;right:0;top:0;z-index:15;height:calc(44px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 -.5px 0 rgba(255,255,255,.12);opacity:0;pointer-events:none;transition:opacity .18s ease}
+#tbar b{font-size:17px;transform:translateY(4px);transition:transform .22s cubic-bezier(.22,1,.36,1);max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tbar.on{opacity:1}
+#tbar.on b{transform:none}
 #tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border:0;background:none;color:var(--muted);font-size:12px;font-weight:700}
 #tabs button[aria-current="page"]{color:var(--accent-text)}
 #tabs .wbtn{gap:4px}
@@ -396,12 +404,14 @@ b,strong,.b{font-weight:600}
 :root[data-glass] #tabs .wbtn.live .wc{box-shadow:inset 0 1px 0 var(--g-spec),inset 0 0 0 1px color-mix(in srgb,var(--accent) 38%,transparent)}
 :root[data-glass] .seg button.on,:root[data-glass] .chip.on{color:var(--text)!important}
 :root[data-glass] .chips.slid .chip.on,:root[data-glass] .seg.slid button.on{background:transparent!important;box-shadow:none}
-:root[data-glass] #tabs{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);box-shadow:inset 0 1px 0 var(--g-rim)}
 :root[data-glass] .seg{background:var(--g-fill);box-shadow:inset 0 0 0 1px var(--g-rim)}
 
 /* Glass v3: frosted translucent cards, a fine light rim, colour from the soft light behind; buttons stay quiet */
 :root[data-glass]{--g-tint:20%;--g-tint2:8%;--g-card:color-mix(in srgb,var(--card) 56%,transparent);--g-card2:color-mix(in srgb,var(--card2) 58%,transparent);--g-cardrim:inset 0 1px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.075)}
 :root[data-glass] :is(.card,.item,.ovbar,.rest,.actbox,.notes,.tile,.group,.search,.mini,.editor){background:var(--g-card)!important;box-shadow:var(--g-cardrim)}
+:root[data-glass]{--g-cardrim:inset 0 1px 0 rgba(255,255,255,.045)}
+:root[data-glass] :is(.card,.item,.tile,.group,.notes,.ovbar){--g-card:color-mix(in srgb,var(--card) 64%,transparent)}
+.scr{gap:24px}
 :root[data-glass] .actbox .sw-wrap .item{background:var(--g-card2)!important}
 :root[data-glass] .item[style*="background:var(--card2)"]{background:var(--g-card2)!important}
 :root[data-glass] :is(.card.pad,.rest,.sheet){-webkit-backdrop-filter:blur(18px) saturate(1.35);backdrop-filter:blur(18px) saturate(1.35)}
@@ -429,6 +439,7 @@ b,strong,.b{font-weight:600}
 <div id="app">
   <div id="aura" aria-hidden="true"><i></i><i></i><i></i></div>
   <div id="screen"></div>
+  <div id="tbar" aria-hidden="true"><b></b></div>
   <div id="toast" hidden></div>
   <div id="mini" hidden></div>
   <nav id="tabs" aria-label="Tabs" hidden></nav>
@@ -861,6 +872,8 @@ function doRender() {
   var tabsOn = !NOTABS[U.route];
   $('#tabs').hidden = !tabsOn;
   if (tabsOn) $('#tabs').innerHTML = tabsHtml();
+  document.documentElement.style.setProperty('--tabh', tabsOn ? $('#tabs').offsetHeight + 'px' : '0px');
+  tbarSync();
   $('#mini').hidden = true;
   var sh = $('#sheet');
   var typing = document.activeElement && sh.contains(document.activeElement) && /^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName);
@@ -917,6 +930,16 @@ function slideSel() {
     selPos[key] = { x: x, w: w };
   });
 }
+function tbarSync() {
+  var tb = $('#tbar'), sc = $('#screen'); if (!tb || !sc) return;
+  var h = U.route === 'workout' || U.sheet ? null : sc.querySelector('.scr h1.h1');
+  if (!h) { tb.classList.remove('on'); return; }
+  var t = h.textContent.trim(); if (tb.firstChild.textContent !== t) tb.firstChild.textContent = t;
+  var top = sc.getBoundingClientRect().top + tb.offsetHeight - (parseFloat(getComputedStyle(document.getElementById('app')).paddingTop) || 0);
+  tb.classList.toggle('on', h.getBoundingClientRect().bottom < top + 4);
+}
+document.addEventListener('scroll', function (ev) { if (ev.target && ev.target.id === 'screen') tbarSync(); }, true);
+window.addEventListener('resize', function () { var tb = $('#tabs'); if (tb && !tb.hidden) document.documentElement.style.setProperty('--tabh', tb.offsetHeight + 'px'); });
 function toastHtml() { return U.undo ? '<div class="toast" role="status"><span class="f1">' + esc(U.undo.label) + '</span>' + (U.undo.fn ? '<button data-a="undo">Undo</button>' : '') + '</div>' : ''; }
 function setUndo(label, fn) { U.undo = { k: uid(), label: label, fn: fn }; }
 function toastSync() {
