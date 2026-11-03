@@ -297,7 +297,7 @@ button:disabled{opacity:.4;cursor:default}
 #mini{padding:0 max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px))}
 .mini{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:10px 14px;border:0;border-radius:16px;background:var(--card2);color:var(--text);text-align:left}
 .mini-rest{font-size:22px;font-weight:700;color:var(--accent-text)}
-#tabs{position:absolute;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:6px max(12px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 .5px 0 rgba(255,255,255,.14)}
+#tabs{position:absolute;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:4px max(12px,env(safe-area-inset-right,0px)) max(6px,calc(env(safe-area-inset-bottom,0px) - 20px)) max(12px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 .5px 0 rgba(255,255,255,.14)}
 #tabs button:not(.wbtn) svg{box-sizing:content-box;padding:3px 16px;margin:-3px 0;border-radius:14px;transition:background .2s ease}
 #tabs button[aria-current="page"]:not(.wbtn) svg{background:color-mix(in srgb,var(--accent) 18%,transparent)}
 .scr{padding-bottom:calc(24px + var(--tabh,0px))!important}
