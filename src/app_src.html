@@ -3,7 +3,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: one phone column. A scrolling screen, then an optional minimized-workout bar and the tab bar; sheets slide up over everything. Each theme is a token set on :root[data-app-theme]. */
-:root{--bg:#2F4F57;--card:#385C64;--card2:#44797D;--text:#EDF7FE;--muted:#C9E1F3;--accent:#9DE5E1;--accent-text:#9DE5E1;--on-accent:#2F4F57;--dim:#6E979C;--line:#44797D;--back:#14252A;color-scheme:dark}
+:root{--bg:#2F4F57;--card:#385C64;--card2:#44797D;--text:#EDF7FE;--muted:#C9E1F3;--accent:#FF8C75;--accent-text:#FF9F8B;--on-accent:#2F4F57;--glow:#3E8C93;--glow-op:.55;--dim:#6E979C;--line:#44797D;--back:#14252A;color-scheme:dark}
 :root[data-app-theme="forest"]{--bg:#142F1E;--card:#1F432B;--card2:#316339;--text:#F7FEE9;--muted:#B4CDB6;--accent:#B1E556;--accent-text:#B1E556;--on-accent:#142F1E;--dim:#4F7A56;--line:#316339;--back:#07140B;color-scheme:dark}
 :root[data-app-theme="oxblood"]{--bg:#2A0D12;--card:#3A141B;--card2:#4E1C25;--text:#F8EDE6;--muted:#D8B9B2;--accent:#F2E3D5;--accent-text:#E8C9B0;--on-accent:#2A0D12;--dim:#7A4A52;--line:#4E1C25;--back:#12050A;color-scheme:dark}
 :root[data-app-theme="graphite"]{--bg:#141415;--card:#1B1B1D;--card2:#262628;--text:#EDEDED;--muted:#A1A1A6;--accent:#D4D4D8;--accent-text:#C4C4C9;--on-accent:#141415;--dim:#4A4A4E;--line:#2A2A2C;--back:#000000;--glow:#3A3A3E;--glow-op:.5;color-scheme:dark}
@@ -1703,7 +1703,7 @@ function vSettings() {
   loadGeist();
   var s = S.settings;
   function stp(a, k, val, label) { return '<div class="row between"><span class="f1" style="font-size:15px">' + label + '</span><span class="mini-stepper"><button data-a="' + a + '" data-k="' + k + '" data-d="-1" aria-label="Less">−</button><b>' + val + '</b><button data-a="' + a + '" data-k="' + k + '" data-d="1" aria-label="More">+</button></span></div>'; }
-  var themes = [['teal', 'Teal', '#2F4F57', '#9DE5E1', '#44797D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84']];
+  var themes = [['teal', 'Teal', '#2F4F57', '#FF8C75', '#44797D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84']];
   return '' + (U.stack.length ? '<button class="backlink" data-a="back">' + ic('back', 22) + 'Back</button>' : '') + '<h1 class="h1">Settings</h1>' +
     '<section class="col g6"><h2 class="label">Training</h2><div class="group">' + stp('sGoal', 'goal', s.goal, 'Weekly goal') + stp('sRest', 'restBig', mmss(s.restBig), 'Big lift rest') + stp('sRest', 'restSmall', mmss(s.restSmall), 'Small lift rest') +
     '<div class="row between"><span class="f1" style="font-size:15px">Sound when rest ends</span><button class="switch' + (s.sound ? ' on' : '') + '" role="switch" aria-checked="' + s.sound + '" aria-label="Sound when rest ends" data-a="sSound"><i></i></button></div>' +
