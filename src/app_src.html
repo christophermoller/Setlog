@@ -138,6 +138,9 @@ button:disabled{opacity:.4;cursor:default}
 .ctl4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .ctl4 button{border:0;border-radius:12px;min-height:46px;background:var(--card2);color:var(--text);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
 .rest.idle{flex-direction:row;align-items:center;justify-content:space-between;padding:12px 16px}
+.spc{padding-top:12px!important;padding-bottom:12px!important}
+.btn.usebtn{flex:none;min-height:36px;padding:0 14px;font-size:14px;background:color-mix(in srgb,var(--accent) 24%,transparent)!important;color:var(--text);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 40%,transparent)!important}
+.sphead{border:0;background:none;padding:0;color:var(--text);text-align:left;flex:1;min-width:0}
 .actbox{background:var(--card);border-radius:24px;padding:14px 10px 6px}
 .actbox .sw-wrap .item{background:var(--card2)}
 .actbox .sw-wrap .sw-row{border-radius:16px}
@@ -1539,12 +1542,19 @@ function vPreview() {
     '<button class="btn block" style="background:var(--card)" data-a="openLib" data-m="draft">' + ic('plus', 18, 2.2) + 'Add exercise</button>' +
     '<div class="stickybar"><button class="btn primary block" data-a="draftStart">' + (first ? 'Start ' + esc(exName(first.exId)) : 'Start workout') + '</button></div>';
 }
+function spCard(x, active, open) {
+  var n = pl(x.workouts.length, 'workout');
+  if (!open) return '<div class="spw"><button class="item spc" data-a="spToggle" data-s="' + x.id + '" aria-expanded="false"><span class="col g2 f1">' + (active ? '<span class="eyebrow">Active split</span>' : '') + '<b>' + esc(x.name) + '</b><span class="small muted">' + n + '</span></span><span class="chev">' + ic('down', 18) + '</span></button></div>';
+  return '<div class="spw"><section class="actbox col g10"><div class="row between g8" style="padding:2px 4px 0"><button class="sphead" data-a="spToggle" data-s="' + x.id + '" aria-expanded="true"><span class="col g4"><span class="eyebrow">' + (active ? 'Active split' : n) + '</span><h2 class="h1" style="font-size:26px">' + esc(x.name) + '</h2></span></button>' +
+    (active ? '' : '<button class="btn sm usebtn" data-a="splitUseId" data-s="' + x.id + '">Use split</button>') + '</div>' +
+    '<div class="col g6">' + wkRows(x) + '</div>' +
+    '<div class="row between" style="padding-right:4px"><button class="btn ghost" data-a="tplNew" data-s="' + x.id + '">' + ic('plus', 18, 2.2) + 'Add workout</button><button class="iconbtn" style="width:40px;height:40px;background:none;color:var(--muted)" data-a="splitOpen" data-s="' + x.id + '" aria-label="Rename or delete split">' + ic('edit', 17) + '</button></div></section></div>';
+}
 function vSplits() {
-  var sp = activeSplit();
-  var act = sp ? '<section class="actbox col g10"><div class="row between g8" style="padding:2px 4px 0"><span class="col g4"><span class="eyebrow">Active split</span><h2 class="h1" style="font-size:26px">' + esc(sp.name) + '</h2></span><button class="btn sm" style="background:var(--card2)" data-a="splitOpen" data-s="' + sp.id + '">Edit</button></div>' +
-    '<div class="col g6">' + wkRows(sp) + '</div><button class="btn ghost" style="align-self:flex-start" data-a="tplNew" data-s="' + sp.id + '">' + ic('plus', 18, 2.2) + 'Add workout</button></section>' : '';
-  var others = S.splits.filter(function (x) { return !sp || x.id !== sp.id; }).map(function (x) { return '<button class="item" data-a="splitOpen" data-s="' + x.id + '"><span class="col g2 f1"><b>' + esc(x.name) + '</b><span class="small muted">' + pl(x.workouts.length, 'workout') + '</span></span><span class="chev">' + ic('chev', 18) + '</span></button>'; });
-  TEMPLATES.forEach(function (t, i) { if (!S.splits.some(function (x) { return x.tplKey === t.key; })) others.push('<button class="item" data-a="splitOpenT" data-i="' + i + '"><span class="col g2 f1"><b>' + esc(t.name) + '</b><span class="small muted">' + pl(t.workouts.length, 'workout') + '</span></span><span class="chev">' + ic('chev', 18) + '</span></button>'); });
+  var sp = activeSplit(), openId = U.spOpen == null ? (sp ? sp.id : '') : U.spOpen;
+  var act = sp ? spCard(sp, true, openId === sp.id) : '';
+  var others = S.splits.filter(function (x) { return !sp || x.id !== sp.id; }).map(function (x) { return spCard(x, false, openId === x.id); });
+  TEMPLATES.forEach(function (t, i) { if (!S.splits.some(function (x) { return x.tplKey === t.key; })) others.push('<div class="spw"><button class="item spc" data-a="spToggleT" data-i="' + i + '" aria-expanded="false"><span class="col g2 f1"><b>' + esc(t.name) + '</b><span class="small muted">' + pl(t.workouts.length, 'workout') + '</span></span><span class="chev">' + ic('down', 18) + '</span></button></div>'); });
   return '<div class="row between g8"><h1 class="h1">Splits</h1><span class="row" style="gap:8px"><button class="btn sm" data-a="startEmpty">' + ic('plus', 16, 2.4) + 'New workout</button><button class="btn sm" data-a="exLib">' + ic('search', 16, 2.2) + 'Exercises</button></span></div>' + act +
     '<section class="col g6" style="margin-top:10px"><div class="row between" style="margin-bottom:4px"><h2 class="label" style="margin:0">Other splits</h2><button class="btn ghost" style="min-height:32px;padding:0 4px 0 8px;color:var(--text)" data-a="splitCreate">' + ic('plus', 16, 2.4) + 'Create</button></div>' + others.join('') + '</section>';
 }
@@ -2115,7 +2125,9 @@ var H = {
     S.splits.push(sp); saveSplit(sp); U.splitId = sp.id; go('split');
     var inp = $('#splitName'); if (inp) { inp.focus(); try { inp.select(); } catch (e) {} }
   },
-  splitUseId: function (d) { S.settings.activeSplit = d.s; saveSettings(); tab('splits'); },
+  splitUseId: function (d) { haptic(); S.settings.activeSplit = d.s; U.spOpen = d.s; saveSettings(); if (U.route === 'splits') { render(); scrTop(); } else tab('splits'); },
+  spToggle: function (d) { var sp = activeSplit(), cur = U.spOpen == null ? (sp ? sp.id : '') : U.spOpen; morph('#screen .spw', function () { U.spOpen = cur === d.s ? '' : d.s; render(); }); },
+  spToggleT: function (d) { var sp = makeSplit(TEMPLATES[+d.i]); S.splits.push(sp); saveSplit(sp); morph('#screen .spw', function () { U.spOpen = sp.id; render(); }); },
   splitDel: function (d) { U.delSplit = d.s; U.sheet = 'delSplit'; render(); },
   splitDelYes: function () {
     var sp = splitById(U.delSplit); U.sheet = null; if (!sp) { render(); return; }
