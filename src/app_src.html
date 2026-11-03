@@ -7,13 +7,8 @@
 :root[data-app-theme="black"]{--bg:#0E0E0E;--card:#1C1C1E;--card2:#2A2A2D;--text:#FFFFFF;--muted:#A1A1A6;--accent:#8AF921;--accent-text:#8AF921;--on-accent:#0E0E0E;--dim:#4A4A4E;--line:#2A2A2D;--back:#000000;color-scheme:dark}
 :root[data-app-theme="forest"]{--bg:#142F1E;--card:#1F432B;--card2:#316339;--text:#F7FEE9;--muted:#B4CDB6;--accent:#B1E556;--accent-text:#B1E556;--on-accent:#142F1E;--dim:#4F7A56;--line:#316339;--back:#07140B;color-scheme:dark}
 :root[data-app-theme="oxblood"]{--bg:#2A0D12;--card:#3A141B;--card2:#4E1C25;--text:#F8EDE6;--muted:#D8B9B2;--accent:#F2E3D5;--accent-text:#E8C9B0;--on-accent:#2A0D12;--dim:#7A4A52;--line:#4E1C25;--back:#12050A;color-scheme:dark}
-:root[data-app-theme="clay"]{--bg:#3B1410;--card:#4C1B16;--card2:#63261E;--text:#FFF1E8;--muted:#E8BFAF;--accent:#FF5F45;--accent-text:#FF8A6B;--on-accent:#2B0D09;--dim:#8E4F43;--line:#63261E;--back:#1A0806;color-scheme:dark}
-:root[data-app-theme="midnight"]{--bg:#02070A;--card:#0C171D;--card2:#16262F;--text:#F2F8FB;--muted:#9FB3BE;--accent:#FC734D;--accent-text:#FC8E6F;--on-accent:#02070A;--dim:#3A4A53;--line:#1C2E38;--back:#000000;--glow:#0297DE;--glow-op:.32;color-scheme:dark}
-:root[data-app-theme="bubblegum"]{--bg:#09318D;--card:#123C9C;--card2:#1E4BB0;--text:#FFFFFF;--muted:#C3D0F2;--accent:#FD91CC;--accent-text:#FDA6D6;--on-accent:#3B0A27;--dim:#5A75C0;--line:#2654BB;--back:#041A4D;--glow:#FD91CC;--glow-op:.28;color-scheme:dark}
-:root[data-app-theme="sky"]{--bg:#FCFFFF;--card:#E3F2F8;--card2:#CDE6F1;--text:#06293A;--muted:#46697A;--accent:#D83995;--accent-text:#C02A80;--on-accent:#FFFFFF;--dim:#9DBFCD;--line:#CDE6F1;--back:#06293A;--glow:#0593C6;--glow-op:.28;color-scheme:light}
 :root[data-app-theme="graphite"]{--bg:#141415;--card:#1B1B1D;--card2:#262628;--text:#EDEDED;--muted:#A1A1A6;--accent:#D4D4D8;--accent-text:#C4C4C9;--on-accent:#141415;--dim:#4A4A4E;--line:#2A2A2C;--back:#000000;--glow:#3A3A3E;--glow-op:.5;color-scheme:dark}
 :root[data-app-theme="dusk"]{--bg:#262A35;--card:#2F3441;--card2:#3A404F;--text:#F3F0F2;--muted:#A1A6B4;--accent:#EC8E7C;--accent-text:#F0A190;--on-accent:#2A1F26;--dim:#5A6070;--line:#3A404F;--back:#14161C;--glow:#9E4F84;--glow-op:.55;--g-grad:linear-gradient(90deg,color-mix(in srgb,#9E4F84 70%,transparent),color-mix(in srgb,#EC8E7C 70%,transparent));color-scheme:dark}
-:root[data-app-theme="sage"]{--bg:#F8F6E8;--card:#DFDDC8;--card2:#CAC8B1;--text:#3A4642;--muted:#56635E;--accent:#C8E97B;--accent-text:#46544F;--on-accent:#3A4642;--dim:#A9A893;--line:#CAC8B1;--back:#46544F;color-scheme:light}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -375,7 +370,6 @@ b,strong,.b{font-weight:600}
 
 /* Liquid glass: translucent material, specular rim, tint only where it means something */
 :root[data-glass]{--g-fill:rgba(255,255,255,.075);--g-fill-on:rgba(255,255,255,.13);--g-rim:rgba(255,255,255,.09);--g-spec:rgba(255,255,255,.24);--g-low:rgba(0,0,0,.24);--g-drop:0 10px 26px -10px rgba(0,0,0,.45);--g-tint:30%;--g-tint2:14%}
-:root[data-glass][data-app-theme="sage"],:root[data-glass][data-app-theme="sky"]{--g-fill:rgba(255,255,255,.45);--g-fill-on:rgba(255,255,255,.72);--g-rim:rgba(0,0,0,.07);--g-spec:rgba(255,255,255,.95);--g-low:rgba(0,0,0,.05);--g-drop:0 10px 24px -12px rgba(0,0,0,.22);--g-tint:26%;--g-tint2:12%}
 :root[data-glass][data-app-theme="graphite"]{--g-tint:24%;--g-tint2:10%}
 :root[data-glass] .chip.on,
 :root[data-glass] .starbtn.on,
@@ -394,7 +388,6 @@ b,strong,.b{font-weight:600}
 
 /* Glass v3: frosted translucent cards, a fine light rim, colour from the soft light behind; buttons stay quiet */
 :root[data-glass]{--g-tint:20%;--g-tint2:8%;--g-card:color-mix(in srgb,var(--card) 56%,transparent);--g-card2:color-mix(in srgb,var(--card2) 58%,transparent);--g-cardrim:inset 0 1px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.075)}
-:root[data-glass][data-app-theme="sage"],:root[data-glass][data-app-theme="sky"]{--g-card:color-mix(in srgb,#fff 52%,transparent);--g-card2:color-mix(in srgb,#fff 66%,transparent);--g-cardrim:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(0,0,0,.06)}
 :root[data-glass] :is(.card,.item,.ovbar,.rest,.actbox,.notes,.tile,.group,.search,.mini,.editor){background:var(--g-card)!important;box-shadow:var(--g-cardrim)}
 :root[data-glass] .actbox .sw-wrap .item{background:var(--g-card2)!important}
 :root[data-glass] .item[style*="background:var(--card2)"]{background:var(--g-card2)!important}
@@ -676,6 +669,7 @@ function afterLoad() {
 }
 function applyTheme() {
   var t = S.settings.theme || 'teal';
+  if (['sage', 'clay', 'midnight', 'bubblegum', 'sky'].indexOf(t) >= 0) t = S.settings.theme = 'teal';
   if (t === 'teal') document.documentElement.removeAttribute('data-app-theme');
   else document.documentElement.setAttribute('data-app-theme', t);
   if (S.settings.weight === 'geist') { S.settings.weight = 'book'; S.settings.font = 'geist'; }
@@ -1614,7 +1608,7 @@ function vSettings() {
   loadGeist();
   var s = S.settings;
   function stp(a, k, val, label) { return '<div class="row between"><span class="f1" style="font-size:15px">' + label + '</span><span class="mini-stepper"><button data-a="' + a + '" data-k="' + k + '" data-d="-1" aria-label="Less">−</button><b>' + val + '</b><button data-a="' + a + '" data-k="' + k + '" data-d="1" aria-label="More">+</button></span></div>'; }
-  var themes = [['teal', 'Teal', '#2F4F57', '#9DE5E1', '#44797D'], ['black', 'Black', '#0E0E0E', '#8AF921', '#2A2A2D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['sage', 'Sage', '#F8F6E8', '#46544F', '#C8E97B'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['clay', 'Clay', '#3B1410', '#FF5F45', '#63261E'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['midnight', 'Midnight', '#02070A', '#FC734D', '#0297DE'], ['bubblegum', 'Bubblegum', '#09318D', '#FD91CC', '#FFFFFF'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84'], ['sky', 'Sky', '#FCFFFF', '#D83995', '#0593C6']];
+  var themes = [['teal', 'Teal', '#2F4F57', '#9DE5E1', '#44797D'], ['black', 'Black', '#0E0E0E', '#8AF921', '#2A2A2D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84']];
   return '' + (U.stack.length ? '<button class="backlink" data-a="back">' + ic('back', 22) + 'Back</button>' : '') + '<h1 class="h1">Settings</h1>' +
     '<section class="col g6"><h2 class="label">Training</h2><div class="group">' + stp('sGoal', 'goal', s.goal, 'Weekly goal') + stp('sRest', 'restBig', mmss(s.restBig), 'Big lift rest') + stp('sRest', 'restSmall', mmss(s.restSmall), 'Small lift rest') +
     '<div class="row between"><span class="f1" style="font-size:15px">Sound when rest ends</span><button class="switch' + (s.sound ? ' on' : '') + '" role="switch" aria-checked="' + s.sound + '" aria-label="Sound when rest ends" data-a="sSound"><i></i></button></div></div></section>' +
