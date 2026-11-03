@@ -8,6 +8,7 @@
 :root[data-app-theme="oxblood"]{--bg:#2A0D12;--card:#3A141B;--card2:#4E1C25;--text:#F8EDE6;--muted:#D8B9B2;--accent:#F2E3D5;--accent-text:#E8C9B0;--on-accent:#2A0D12;--dim:#7A4A52;--line:#4E1C25;--back:#12050A;color-scheme:dark}
 :root[data-app-theme="graphite"]{--bg:#141415;--card:#1B1B1D;--card2:#262628;--text:#EDEDED;--muted:#A1A1A6;--accent:#D4D4D8;--accent-text:#C4C4C9;--on-accent:#141415;--dim:#4A4A4E;--line:#2A2A2C;--back:#000000;--glow:#3A3A3E;--glow-op:.5;color-scheme:dark}
 :root[data-app-theme="dusk"]{--bg:#262A35;--card:#2F3441;--card2:#3A404F;--text:#F3F0F2;--muted:#A1A6B4;--accent:#EC8E7C;--accent-text:#F0A190;--on-accent:#2A1F26;--dim:#5A6070;--line:#3A404F;--back:#14161C;--glow:#9E4F84;--glow-op:.55;--g-grad:linear-gradient(90deg,color-mix(in srgb,#9E4F84 70%,transparent),color-mix(in srgb,#EC8E7C 70%,transparent));color-scheme:dark}
+:root[data-app-theme="rose"]{--bg:#3A2630;--card:#4A313D;--card2:#5D3E4D;--text:#FCF1F4;--muted:#E3C5D0;--accent:#F5A9BC;--accent-text:#F7B8C8;--on-accent:#3A2630;--dim:#7A5666;--line:#5D3E4D;--back:#1E1318;--glow:#C96F8E;--glow-op:.5;color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -1703,7 +1704,7 @@ function vSettings() {
   loadGeist();
   var s = S.settings;
   function stp(a, k, val, label) { return '<div class="row between"><span class="f1" style="font-size:15px">' + label + '</span><span class="mini-stepper"><button data-a="' + a + '" data-k="' + k + '" data-d="-1" aria-label="Less">−</button><b>' + val + '</b><button data-a="' + a + '" data-k="' + k + '" data-d="1" aria-label="More">+</button></span></div>'; }
-  var themes = [['teal', 'Teal', '#2F4F57', '#FF8C75', '#44797D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84']];
+  var themes = [['teal', 'Teal', '#2F4F57', '#FF8C75', '#44797D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84'], ['rose', 'Rosé', '#3A2630', '#F5A9BC', '#5D3E4D']];
   return '' + (U.stack.length ? '<button class="backlink" data-a="back">' + ic('back', 22) + 'Back</button>' : '') + '<h1 class="h1">Settings</h1>' +
     '<section class="col g6"><h2 class="label">Training</h2><div class="group">' + stp('sGoal', 'goal', s.goal, 'Weekly goal') + stp('sRest', 'restBig', mmss(s.restBig), 'Big lift rest') + stp('sRest', 'restSmall', mmss(s.restSmall), 'Small lift rest') +
     '<div class="row between"><span class="f1" style="font-size:15px">Sound when rest ends</span><button class="switch' + (s.sound ? ' on' : '') + '" role="switch" aria-checked="' + s.sound + '" aria-label="Sound when rest ends" data-a="sSound"><i></i></button></div>' +
