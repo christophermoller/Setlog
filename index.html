@@ -317,7 +317,9 @@ button:disabled{opacity:.4;cursor:default}
 .sw-wrap.gone{transition:height .2s ease,opacity .2s ease;opacity:0}
 .sw-row.nt{transition:none}
 .sw-row.wc{will-change:transform}
-.sw-wrap.dragging{border-radius:16px}
+.sw-wrap.dragging,.sw-wrap.settle{border-radius:16px}
+.settle{position:relative;z-index:5}
+.lifted{background:var(--card2)!important;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #toast{position:fixed!important;z-index:45!important;left:0;right:0;margin:0 auto;max-width:480px;bottom:84px;padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));opacity:0;transform:translateY(16px) scale(.97);transition:opacity .22s ease,transform .34s cubic-bezier(.22,1,.36,1);pointer-events:none}
 #toast.on{opacity:1;transform:none;pointer-events:auto}
 .toast{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 6px 0 16px;border-radius:14px;background:var(--text);color:var(--bg);font-size:15px;box-shadow:0 12px 32px rgba(0,0,0,.3)}
@@ -2333,7 +2335,7 @@ document.addEventListener('pointermove', function (ev) {
     dragStart(drag);
   }
   var dy = ev.clientY - drag.y0; if (Math.abs(dy) > 4) dragMoved = true;
-  drag.item.style.transform = 'translateY(' + dy + 'px)';
+  drag.item.style.transform = 'translateY(' + dy + 'px) scale(1.02)';
   var to = dragTarget(drag, dy), r0 = drag.rects[drag.from];
   var gap = drag.rects.length > 1 ? Math.abs(drag.rects[1].top - drag.rects[0].bottom) : 6, step = r0.height + gap;
   drag.items.forEach(function (el, i) {
@@ -2353,6 +2355,7 @@ function endDrag(ev) {
   if (!drag || ev.pointerId !== drag.id) return;
   var d = drag; drag = null;
   if (d.pending) return;
+  var oR = d.item.getBoundingClientRect(), oC = (oR.top + oR.bottom) / 2, lid = d.item.parentElement && d.item.parentElement.id;
   d.item.classList.remove('dragging'); d.item.style.transform = '';
   d.items.forEach(function (el) { el.classList.remove('shift'); el.style.transform = ''; });
   var to = dragTarget(d, ev.clientY - d.y0);
@@ -2362,7 +2365,19 @@ function endDrag(ev) {
     else if (d.kind === 'tpl') { var cx = tplCtx(); moveItem(cx.w.items, d.from, to); if (U.tplOpen === d.from) U.tplOpen = to; else U.tplOpen = null; saveSplit(cx.sp); }
   }
   render();
+  settleDrop(lid, to, oC);
   setTimeout(function () { dragMoved = false; }, 0);
+}
+/* let the dropped row glide and settle into its slot instead of snapping */
+function settleDrop(lid, to, oC) {
+  var list = lid && document.getElementById(lid), el = list && list.querySelectorAll(':scope > [data-item]')[to];
+  if (!el || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var r = el.getBoundingClientRect(), dy = oC - (r.top + r.bottom) / 2;
+  el.classList.add('settle', 'lifted'); el.style.transition = 'none'; el.style.transform = 'translateY(' + dy + 'px) scale(1.02)';
+  void el.offsetHeight;
+  el.style.transition = 'transform .46s cubic-bezier(.3,1.35,.5,1),box-shadow .4s ease,background-color .4s ease';
+  el.style.transform = ''; el.classList.remove('lifted');
+  setTimeout(function () { el.classList.remove('settle'); el.style.transition = ''; }, 500);
 }
 document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
