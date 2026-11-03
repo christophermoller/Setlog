@@ -658,11 +658,17 @@ async function initDb() {
       lsSave(); flushAll();
     } catch (e) {}
   }
-  afterLoad(); render();
+  dbDone = true; afterLoad(); render();
 }
+var dbDone = false;
 function afterLoad() {
   applyTheme(); regCustom();
-  if (!S.settings.onboarded) { U.route = 'onb1'; U.stack = []; return; }
+  if (!S.settings.onboarded) {
+    if (window.claude && !dbDone) { U.route = 'home'; U.stack = []; return; }
+    // first launch: straight to Home with a ready split and 3 sessions a week
+    var sp0 = makeSplit(TEMPLATES[0]); S.splits.push(sp0); S.settings.activeSplit = sp0.id; S.settings.goal = 3; S.settings.onboarded = true;
+    saveSplit(sp0); saveSettings(); U.route = 'home'; U.stack = [];
+  }
   if (!activeSplit() && S.splits.length) { S.settings.activeSplit = S.splits[0].id; }
   if (S.active && (U.route === 'home' || U.route.indexOf('onb') === 0)) { U.route = 'workout'; U.stack = []; }
   if (!S.active && U.route === 'workout') U.route = 'home';
