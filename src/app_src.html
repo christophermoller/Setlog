@@ -9,6 +9,10 @@
 :root[data-app-theme="graphite"]{--bg:#141415;--card:#1B1B1D;--card2:#262628;--text:#EDEDED;--muted:#A1A1A6;--accent:#D4D4D8;--accent-text:#C4C4C9;--on-accent:#141415;--dim:#4A4A4E;--line:#2A2A2C;--back:#000000;--glow:#3A3A3E;--glow-op:.5;color-scheme:dark}
 :root[data-app-theme="dusk"]{--bg:#262A35;--card:#2F3441;--card2:#3A404F;--text:#F3F0F2;--muted:#A1A6B4;--accent:#EC8E7C;--accent-text:#F0A190;--on-accent:#2A1F26;--dim:#5A6070;--line:#3A404F;--back:#14161C;--glow:#9E4F84;--glow-op:.55;--g-grad:linear-gradient(90deg,color-mix(in srgb,#9E4F84 70%,transparent),color-mix(in srgb,#EC8E7C 70%,transparent));color-scheme:dark}
 :root[data-app-theme="rose"]{--bg:#3A2630;--card:#4A313D;--card2:#5D3E4D;--text:#FCF1F4;--muted:#E3C5D0;--accent:#F5A9BC;--accent-text:#F7B8C8;--on-accent:#3A2630;--dim:#7A5666;--line:#5D3E4D;--back:#1E1318;--glow:#C96F8E;--glow-op:.5;color-scheme:dark}
+:root[data-app-theme="silver"]{--bg:#77787B;--card:#838487;--card2:#909194;--text:#FFFFFF;--muted:#ECECEC;--accent:#E2603A;--accent-text:#FFC9B5;--on-accent:#FFFFFF;--dim:#A2A3A6;--line:#909194;--back:#3E3F41;--glow:#9A9B9E;--glow-op:.3;color-scheme:dark}
+:root[data-glass][data-app-theme="silver"]{--g-tint:80%;--g-tint2:64%}
+:root[data-app-theme="silver"] #aura{display:none}
+:root[data-app-theme="silver"] body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -230,6 +234,7 @@ button:disabled{opacity:.4;cursor:default}
 .titlebtn{border:0;background:none;padding:0;margin:0;color:var(--text);text-align:left;display:inline-flex;align-items:center;gap:8px;align-self:flex-start;cursor:pointer}
 .titlebtn .tchev{display:inline-flex;color:var(--muted);transition:transform .28s cubic-bezier(.22,1,.36,1)}
 .titlebtn.open .tchev{transform:rotate(180deg)}
+svg .hit{cursor:pointer}
 .unit{font-size:.58em;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
 .rl{display:inline-grid;overflow:hidden;vertical-align:bottom}
 .rl>span{grid-area:1/1}
@@ -1265,7 +1270,8 @@ function shEnd() {
   return '<h2 class="h2">End workout?</h2><ul class="col g8" style="list-style:none;margin:0;padding:0;font-size:15px">' + list + '</ul><div class="col g8"><button class="btn primary block" data-a="endConfirm">End workout</button><button class="btn block" data-a="closeSheet">Keep going</button><button class="btn ghost" style="align-self:center;min-height:44px" data-a="endDiscard">Discard workout</button></div>';
 }
 function shLogW() {
-  return '<h2 class="h2">Bodyweight</h2><div class="stepper" style="grid-template-columns:56px 1fr 56px"><button data-a="wAdj" data-d="-0.1" aria-label="0.1 kg less">−</button><input id="wIn" data-in="wIn" inputmode="decimal" value="' + esc(fnum(U.wv)) + '" aria-label="Bodyweight in kg" style="font-size:28px;min-height:60px"><button data-a="wAdj" data-d="0.1" aria-label="0.1 kg more">+</button></div><button class="btn primary block" data-a="wSave">Save</button>';
+  var ed = U.wEditT != null;
+  return (ed ? '<div class="col g4"><span class="eyebrow">' + dWDM(U.wEditT) + '</span><h2 class="h2">Edit bodyweight</h2></div>' : '<h2 class="h2">Bodyweight</h2>') + '<div class="stepper" style="grid-template-columns:56px 1fr 56px"><button data-a="wAdj" data-d="-0.1" aria-label="0.1 kg less">−</button><input id="wIn" data-in="wIn" inputmode="decimal" value="' + esc(fnum(U.wv)) + '" aria-label="Bodyweight in kg" style="font-size:28px;min-height:60px"><button data-a="wAdj" data-d="0.1" aria-label="0.1 kg more">+</button></div>' + (ed ? '<div class="grid2"><button class="btn block" style="background:var(--card2)" data-a="wDel" data-t="' + U.wEditT + '">Delete</button><button class="btn primary block" style="min-height:48px;font-size:16px" data-a="wSave">Save</button></div>' : '<button class="btn primary block" data-a="wSave">Save</button>');
 }
 function shBusy() {
   var n = esc(S.active.name);
@@ -1593,7 +1599,7 @@ function vTpl() {
 }
 
 /* ---------- views: progress ---------- */
-function lineChart(pts, unit) {
+function lineChart(pts, unit, tap) {
   var W = 340, H = 180, L = 40, R = 12, Tp = 26, B = 24;
   var xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
   var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
@@ -1609,6 +1615,7 @@ function lineChart(pts, unit) {
     pts.slice(0, -1).map(function (p) { return '<circle cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="3" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"/>'; }).join('') +
     '<circle cx="' + X(lp.x).toFixed(1) + '" cy="' + Y(lp.y).toFixed(1) + '" r="5" fill="var(--accent)"/>' +
     '<text class="val" x="' + Math.min(W - R, X(lp.x)).toFixed(1) + '" y="' + (Y(lp.y) - 10).toFixed(1) + '" text-anchor="end">' + fnum(lp.y) + ' ' + unit + '</text>' +
+    (tap ? pts.map(function (p) { return '<circle class="hit" cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="14" fill="transparent" data-a="wEdit" data-t="' + p.x + '" role="button" aria-label="' + fnum(p.y) + ' ' + unit + ' ' + dDM(p.x) + '"/>'; }).join('') : '') +
     '<text x="' + L + '" y="' + (H - 6) + '" text-anchor="start">' + dDM(x0) + '</text>' + (x1 !== x0 ? '<text x="' + (W - R) + '" y="' + (H - 6) + '" text-anchor="end">' + dDM(x1) + '</text>' : '') + '</svg>';
 }
 function niceTicks(min, max, n) {
@@ -1704,10 +1711,13 @@ function vBody(inner) {
     var d = Math.round((last.kg - ref.kg) * 10) / 10; change = (d > 0 ? '+' : d < 0 ? '−' : '±') + Math.abs(d) + ' kg in 30 days';
   }
   return (inner ? '' : '<h1 class="h1">Body</h1>') +
-    '<div class="row between" style="align-items:flex-start;gap:12px"><div class="col g4"><span class="small muted">' + (last ? dDM(last.t) : 'Bodyweight') + '</span><span class="tnum" style="font-size:48px;font-weight:700;line-height:1;letter-spacing:-.02em">' + (last ? fnum(last.kg) : '–') + ' <span class="muted" style="font-size:22px">kg</span></span>' + (change ? '<span class="small muted">' + change + '</span>' : '') + '</div>' +
+    '<div class="row between" style="align-items:flex-start;gap:12px"><div class="col g4"><span class="small muted">' + (last ? dDM(last.t) : 'Bodyweight') + '</span><span class="tnum"' + (last ? ' data-a="wEdit" data-t="' + last.t + '" role="button"' : '') + ' style="font-size:48px;font-weight:700;line-height:1;letter-spacing:-.02em;cursor:pointer">' + (last ? fnum(last.kg) : '–') + ' <span class="muted" style="font-size:22px">kg</span></span>' + (change ? '<span class="small muted">' + change + '</span>' : '') + '</div>' +
     '<button class="btn" style="margin-top:14px;min-height:44px" data-a="wOpen">' + ic('plus', 16, 2.6) + 'Log</button></div>' +
     (ws.length ? '<div class="seg" style="grid-template-columns:repeat(3,minmax(0,1fr))" role="tablist" aria-label="Period">' + [[30, '30 days'], [90, '90 days'], [365, '1 year']].map(function (x) { return '<button role="tab" aria-selected="' + (range === x[0]) + '" class="' + (range === x[0] ? 'on' : '') + '" data-a="bRange" data-r="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
-      '<div class="chart">' + (pts.length >= 2 ? lineChart(pts, 'kg') : '<p class="muted small">Log your weight a few times to see a curve.</p>') + '</div>' : '');
+      '<div class="chart">' + (pts.length >= 2 ? lineChart(pts, 'kg', true) : '<p class="muted small">Log your weight a few times to see a curve.</p>') + '</div>' +
+      '<section class="col g6"><h2 class="label">Entries</h2><div class="col g6">' + (ws.filter(function (w) { return w.t >= since; }).length ? ws.filter(function (w) { return w.t >= since; }) : ws.slice(-5)).slice().reverse().slice(0, 30).map(function (w) {
+        return swipeRow('<button class="item" style="min-height:52px" data-a="wEdit" data-t="' + w.t + '"><span class="f1">' + dWDM(w.t) + '</span><b class="tnum" style="font-size:17px">' + fnum(w.kg) + '<span class="unit">kg</span></b></button>', swAct('wDel', 'data-t="' + w.t + '"', 'trash', 'Delete', 'del'));
+      }).join('') + '</div></section>' : '');
 }
 
 /* ---------- views: settings ---------- */
@@ -1716,7 +1726,7 @@ function vSettings() {
   loadGeist();
   var s = S.settings;
   function stp(a, k, val, label) { return '<div class="row between"><span class="f1" style="font-size:15px">' + label + '</span><span class="mini-stepper"><button data-a="' + a + '" data-k="' + k + '" data-d="-1" aria-label="Less">−</button><b>' + val + '</b><button data-a="' + a + '" data-k="' + k + '" data-d="1" aria-label="More">+</button></span></div>'; }
-  var themes = [['teal', 'Teal', '#2F4F57', '#FF8C75', '#44797D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84'], ['rose', 'Rosé', '#3A2630', '#F5A9BC', '#5D3E4D']];
+  var themes = [['teal', 'Teal', '#2F4F57', '#FF8C75', '#44797D'], ['forest', 'Forest', '#142F1E', '#B1E556', '#316339'], ['oxblood', 'Oxblood', '#2A0D12', '#F2E3D5', '#4E1C25'], ['graphite', 'Graphite', '#141415', '#EDEDED', '#262628'], ['dusk', 'Dusk', '#262A35', '#EC8E7C', '#9E4F84'], ['rose', 'Rosé', '#3A2630', '#F5A9BC', '#5D3E4D'], ['silver', 'Silver', '#77787B', '#E2603A', '#909194']];
   return '' + (U.stack.length ? '<button class="backlink" data-a="back">' + ic('back', 22) + 'Back</button>' : '') + '<h1 class="h1">Settings</h1>' +
     '<section class="col g6"><h2 class="label">Training</h2><div class="group">' + stp('sGoal', 'goal', s.goal, 'Weekly goal') + stp('sRest', 'restBig', mmss(s.restBig), 'Big lift rest') + stp('sRest', 'restSmall', mmss(s.restSmall), 'Small lift rest') +
     '<div class="row between"><span class="f1" style="font-size:15px">Sound when rest ends</span><button class="switch' + (s.sound ? ' on' : '') + '" role="switch" aria-checked="' + s.sound + '" aria-label="Sound when rest ends" data-a="sSound"><i></i></button></div>' +
@@ -2170,10 +2180,17 @@ var H = {
   pTab: function (d) { U.pTab = d.t; render(); },
   cal: function (d) { var o = U.calOff || 0, n = Math.min(0, o + +d.d); if (n === o) return; U.calOff = n; U.calDir = +d.d; render(); },
   bRange: function (d) { U.bRange = +d.r; render(); },
-  wOpen: function () { var ws = S.weights; U.wv = ws.length ? ws.slice().sort(function (a, b) { return a.t - b.t; })[ws.length - 1].kg : 80; U.sheet = 'logw'; render(); },
+  wOpen: function () { U.wEditT = null; var ws = S.weights; U.wv = ws.length ? ws.slice().sort(function (a, b) { return a.t - b.t; })[ws.length - 1].kg : 80; U.sheet = 'logw'; render(); },
+  wEdit: function (d) { var t = +d.t, w = S.weights.filter(function (x) { return x.t === t; })[0]; if (!w) return; closeSw(); U.wEditT = t; U.wv = w.kg; U.sheet = 'logw'; render(); },
+  wDel: function (d) {
+    var t = +d.t, old = S.weights.slice(); if (!old.some(function (w) { return w.t === t; })) return;
+    haptic(); S.weights = old.filter(function (w) { return w.t !== t; }); saveWeights(); U.wEditT = null; U.sheet = null; render();
+    setUndo('Weight deleted', function () { S.weights = old; saveWeights(); }); render();
+  },
   wAdj: function (d) { var v = num(U.wv); if (isNaN(v)) v = 80; U.wv = Math.round((v + +d.d) * 10) / 10; var i = $('#wIn'); if (i) i.value = fnum(U.wv); },
   wSave: function () {
     var v = num(U.wv); if (isNaN(v) || v <= 0) return;
+    if (U.wEditT != null) { var we = S.weights.filter(function (w) { return w.t === U.wEditT; })[0]; if (we) we.kg = Math.round(v * 10) / 10; haptic(); U.wEditT = null; saveWeights(); U.sheet = null; render(); return; }
     var t = Date.now(), d0 = dayStart(t);
     S.weights = S.weights.filter(function (w) { return dayStart(w.t) !== d0; }); S.weights.push({ t: t, kg: Math.round(v * 10) / 10 });
     saveWeights(); U.sheet = null; render();
