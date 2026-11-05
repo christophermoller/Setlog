@@ -27,7 +27,7 @@ head = """<!doctype html>
 <meta name="theme-color" content="#1B1B1D">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
-<style>html,body{margin:0;height:100%;background:#1B1B1D}@media (display-mode: standalone){#app{padding-top:env(safe-area-inset-top)}}</style>
+<style>html,body{margin:0;height:100%;background:#1B1B1D}@media (display-mode: standalone){html body #app{position:fixed;top:0;right:0;bottom:0;left:0;height:auto;box-sizing:border-box;padding-top:env(safe-area-inset-top)}}</style>
 """
 tail = """
 <script>if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });</script>
