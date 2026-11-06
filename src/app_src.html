@@ -237,6 +237,8 @@ button:disabled{opacity:.4;cursor:default}
 svg .hit{cursor:pointer}
 .pg-top{box-shadow:-14px 0 28px -10px rgba(0,0,0,.45)}
 .pg-cur,.pg-peer{will-change:transform}
+.hlc{border:0;padding:12px 14px!important;border-radius:14px!important;text-align:left;color:var(--text);width:100%;cursor:pointer}
+.hlc.on{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 55%,transparent)!important}
 .unit{font-size:.58em;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
 .rl{display:inline-grid;overflow:hidden;vertical-align:bottom}
 .rl>span{grid-area:1/1}
@@ -1401,7 +1403,7 @@ function analyze(w) {
       var top = function (sets) { var ws2 = working(sets); return ws2.reduce(function (b, s) { return (+s.a > +b.a || (+s.a === +b.a && +s.b > +b.b)) ? s : b; }, ws2[0]); };
       var t0 = top(e.sets), t1 = top(hist[0].e.sets), t2 = top(hist[1].e.sets);
       if (t0 && t1 && t2 && +t0.a === +t1.a && +t0.a === +t2.a && +t0.b === +t1.b && +t0.b === +t2.b && +t0.a > 0) {
-        plateau = { name: exName(e.exId), set: fmtSet(t0, m), next: fnum(+t0.a + stepA(e.exId, e.variant)) };
+        plateau = { k: e.exId + '|' + e.variant, name: keyLabel(e.exId + '|' + e.variant), set: fmtSet(t0, m), next: fnum(+t0.a + stepA(e.exId, e.variant)) };
       }
     }
   });
@@ -1641,12 +1643,12 @@ function highlights() {
       var m = measureOf(e.exId, e.variant); if (m !== 'kg' && m !== 'added') return;
       var k = e.exId + '|' + e.variant, ws = working(e.sets); if (!ws.length) return;
       var b = ws.reduce(function (x, s) { return score(s, m) > score(x, m) ? s : x; }, ws[0]), sc = score(b, m);
-      if (best[k] != null && sc > best[k] + 1e-9) prs.push({ t: w.start, name: exName(e.exId), set: fmtSet(b, m) });
+      if (best[k] != null && sc > best[k] + 1e-9) prs.push({ t: w.start, k: k, name: keyLabel(k), set: fmtSet(b, m) });
       if (best[k] == null || sc > best[k]) best[k] = sc;
     });
   });
-  if (S.workouts[0]) { var an = analyze(S.workouts[0]); if (an.plateau) out.push('<div class="card col g2" style="padding:12px 14px;border-radius:14px"><b style="font-size:15px">Plateau: ' + esc(an.plateau.name) + '</b><span class="small muted">' + esc(an.plateau.set) + ' three sessions in a row. Try ' + an.plateau.next + ' kg or one more rep.</span></div>'); }
-  prs.filter(function (p) { return p.t > Date.now() - 30 * 864e5; }).slice(-2).reverse().forEach(function (p) { out.push('<div class="card col g2" style="padding:12px 14px;border-radius:14px"><b style="font-size:15px">New PR: ' + esc(p.name) + '</b><span class="small muted">' + esc(p.set) + ' on ' + dDM(p.t) + '</span></div>'); });
+  if (S.workouts[0]) { var an = analyze(S.workouts[0]); if (an.plateau) out.push('<button class="card col g2 hlc" data-a="pkPick" data-k="' + esc(an.plateau.k) + '"><b style="font-size:15px">Plateau: ' + esc(an.plateau.name) + '</b><span class="small muted">' + esc(an.plateau.set) + ' three sessions in a row. Try ' + an.plateau.next + ' kg or one more rep.</span></button>'); }
+  prs.filter(function (p) { return p.t > Date.now() - 30 * 864e5; }).slice(-2).reverse().forEach(function (p) { out.push('<button class="card col g2 hlc' + (p.k === U.pKey ? ' on' : '') + '" data-a="pkPick" data-k="' + esc(p.k) + '"><b style="font-size:15px">New PR: ' + esc(p.name) + '</b><span class="small muted">' + esc(p.set) + ' on ' + dDM(p.t) + '</span></button>'); });
   return out.join('');
 }
 function vProgress() {
@@ -1665,9 +1667,11 @@ function vProgress() {
   S.workouts.slice().sort(function (a, b) { return a.start - b.start; }).forEach(function (w) {
     w.exercises.forEach(function (e) { if (e.exId === p[0] && e.variant === p[1]) { var mx = 0; working(e.sets).forEach(function (s) { mx = Math.max(mx, score(s, 'kg')); }); if (mx > 0) pts.push({ x: w.start, y: Math.round(mx * 10) / 10 }); } });
   });
+  var bestS = null; S.workouts.forEach(function (w) { w.exercises.forEach(function (e) { if (e.exId === p[0] && e.variant === p[1]) working(e.sets).forEach(function (st) { var sc = score(st, 'kg'); if (sc > 0 && (!bestS || sc > bestS.sc)) bestS = { s: st, sc: sc, t: w.start }; }); }); });
   var hl = highlights();
   return head + '<button class="item" style="min-height:56px" data-a="pkOpen"><span class="col g2 f1"><span class="small muted">Exercise</span><b style="font-size:17px">' + esc(keyLabel(U.pKey)) + '</b></span><span class="chev">' + ic('down', 18, 2.2) + '</span></button>' +
-    '<div class="col g4"><span class="small muted">Estimated max</span><div class="chart">' + (pts.length >= 2 ? lineChart(pts, 'kg') : '<p class="muted small">Log it twice to see a curve.</p>') + '</div></div>' +
+    '<div class="col g4"><span class="small muted">Est. 1RM</span><div class="chart">' + (pts.length >= 2 ? lineChart(pts, 'kg') : '<p class="muted small">Log it twice to see a curve.</p>') + '</div>' +
+    (bestS ? '<div class="row between small" style="padding:2px 2px 0"><span class="muted">Best set</span><span class="tnum"><b>' + esc(fmtSet(bestS.s, 'kg')) + '</b><span class="muted">' + SEP + dDM(bestS.t) + '</span></span></div>' : '') + '</div>' +
     (hl ? '<section class="col g8"><h2 class="h2" style="font-size:18px">Highlights</h2>' + hl + '</section>' : '');
 }
 function histRow(w) {
@@ -2179,7 +2183,7 @@ var H = {
     setUndo('Note deleted', function () { w.notes = old; saveWorkout(w); }); render();
   },
   pkOpen: function () { U.pkQ = ''; U.sheet = 'pick'; render(); },
-  pkPick: function (d) { U.pKey = d.k; U.sheet = null; render(); },
+  pkPick: function (d) { var fromHl = !U.sheet; U.pKey = d.k; U.sheet = null; render(); if (fromHl) { var sc = $('#screen'); if (sc && sc.scrollTo) sc.scrollTo({ top: 0, behavior: 'smooth' }); } },
   pTab: function (d) { U.pTab = d.t; render(); },
   cal: function (d) { var o = U.calOff || 0, n = Math.min(0, o + +d.d); if (n === o) return; U.calOff = n; U.calDir = +d.d; render(); },
   bRange: function (d) { U.bRange = +d.r; render(); },
