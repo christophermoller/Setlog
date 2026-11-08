@@ -239,6 +239,9 @@ svg .hit{cursor:pointer}
 .pg-cur,.pg-peer{will-change:transform}
 .hlc{border:0;padding:12px 14px!important;border-radius:14px!important;text-align:left;color:var(--text);width:100%;cursor:pointer}
 .hlc.on{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 55%,transparent)!important}
+#tabs svg.tbounce{animation:tBounce .52s cubic-bezier(.3,1.5,.5,1)}
+@keyframes tBounce{0%{transform:scale(1)}28%{transform:scale(.8) translateY(1px)}62%{transform:scale(1.12) translateY(-2px)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){#tabs svg.tbounce{animation:none}}
 .unit{font-size:.58em;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
 .rl{display:inline-grid;overflow:hidden;vertical-align:bottom}
 .rl>span{grid-area:1/1}
@@ -904,7 +907,7 @@ function doRender() {
   var auraOn = S.settings.aura !== false; $('#aura').classList.toggle('on', auraOn); $('#app').classList.toggle('glass', auraOn);
   var tabsOn = !NOTABS[U.route];
   $('#tabs').hidden = !tabsOn;
-  if (tabsOn) $('#tabs').innerHTML = tabsHtml();
+  if (tabsOn) { $('#tabs').innerHTML = tabsHtml(); var ct = curTab(); if (U._tabWas && ct !== U._tabWas) U._tabBT = Date.now(); U._tabWas = ct; var be = Date.now() - (U._tabBT || 0); if (be < 520) { var ab = $('#tabs [aria-current="page"] svg'); if (ab) { ab.style.animationDelay = -be + 'ms'; ab.classList.add('tbounce'); } } }
   document.documentElement.style.setProperty('--tabh', tabsOn ? $('#tabs').offsetHeight + 'px' : '0px');
   tbarSync(); rollSync();
   $('#mini').hidden = true;
