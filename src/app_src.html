@@ -111,6 +111,7 @@ button:disabled{opacity:.4;cursor:default}
 .chip.eqchip{display:inline-flex;align-items:center;justify-content:center;min-width:44px;padding:0 12px;background:none;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--text)}
 .search{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border-radius:14px;background:var(--card);color:var(--muted)}
 .search input{flex:1;min-width:0;border:0;background:transparent;color:var(--text);font-size:16px;outline:none}
+.eqpick{position:relative;min-height:34px;padding:0 12px 0 14px;font-size:14px;margin-top:0}.eqpick select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;border:0}
 .sel{min-height:44px;border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--card);color:var(--text);font-size:15px;font-weight:700;align-self:flex-start;max-width:100%}
 .stepper{display:grid;grid-template-columns:44px 1fr 44px;gap:4px}
 .stepper button{border:0;border-radius:10px;min-height:48px;background:var(--card2);color:var(--text);font-size:22px}
@@ -299,11 +300,13 @@ svg .hit{cursor:pointer}
 .wsel button.on{color:var(--text);box-shadow:inset 0 0 0 2px var(--text)}
 .wsel.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .wsel .aa{font-size:30px;line-height:1.1;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,Arial,sans-serif}
-.themes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 8px}
-.themes button{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;padding:0;background:none;color:var(--muted);font-size:12px;font-weight:700}
+.themes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0}
+.themes button{display:flex;flex-direction:column;align-items:center;gap:8px;border:0;padding:0;background:none;color:var(--muted);font-size:10.5px;font-weight:700;white-space:nowrap}
+.themes .sw{width:40px;height:40px;border-radius:50%;padding:0;align-items:center;justify-content:center;transition:box-shadow .2s ease}
+.themes .sw i{width:16px;height:16px;border-radius:50%;flex:none}
 .themes button.on{color:var(--text)}
 .sw{width:100%;height:52px;border-radius:12px;display:flex;align-items:flex-end;gap:4px;padding:7px}
-.themes button.on .sw{box-shadow:0 0 0 2px var(--text)}
+.themes button.on .sw{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--text)!important}
 .sw i{height:12px;border-radius:4px}
 .confirm{display:flex;flex-direction:column;gap:8px;background:var(--card);border-radius:16px;padding:14px}
 .sw-wrap{position:relative;overflow:hidden;touch-action:pan-y}
@@ -344,7 +347,8 @@ svg .hit{cursor:pointer}
 #tabs button[aria-current="page"]{color:var(--accent-text)}
 #tabs .wbtn{gap:4px}
 #tabs .wbtn .wc{width:44px;height:30px;margin:-3px 0;border-radius:15px;display:flex;align-items:center;justify-content:center;background:var(--card2);color:var(--muted);transition:background .2s ease,color .2s ease}
-#tabs .wbtn.live .wc,#tabs .wbtn[aria-current="page"] .wc{background:var(--accent);color:var(--on-accent)}
+#tabs .wbtn[aria-current="page"] .wc{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent-text)}
+#tabs .wbtn.live .wc{background:var(--accent);color:var(--on-accent)}
 #tabs .wbtn .rt{color:var(--accent-text);font-variant-numeric:tabular-nums}
 .cal button{border:0;padding:0;font:inherit;font-style:normal;aspect-ratio:1;max-width:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-variant-numeric:tabular-nums;background:var(--accent);color:var(--on-accent);font-weight:700}
 .cal button.t{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--text)}
@@ -411,8 +415,12 @@ button:active{transform:scale(.96);filter:brightness(.9)}
 .ovbar{padding:0 16px;gap:16px}
 .rest{padding:16px}
 .rest.mini{padding:12px 12px 12px 16px}
-.dots{grid-template-columns:repeat(7,12px);gap:6px}
-.dots i{width:12px;height:12px;border-radius:6px}
+.dots{grid-template-columns:repeat(7,12px);gap:7px;padding-bottom:15px}
+.dots i{width:12px;height:12px;border-radius:6px;position:relative}
+.dots i::after{content:attr(data-d);position:absolute;top:17px;left:50%;transform:translateX(-50%);font-size:10px;line-height:1;font-style:normal;font-weight:600;color:var(--muted);opacity:.7}
+.dots i.t::after{color:var(--text);opacity:1}
+.dots.wide{grid-template-columns:repeat(7,1fr);gap:0;justify-items:center;padding:4px 0 18px}
+.dots.wide i{width:20px;height:20px;border-radius:10px}.dots.wide i::after{top:26px;font-size:11px}
 .chip{padding:0 16px}
 .srow,.srow.cur{min-height:44px}
 .eyebrow,.label,.tag{font-size:13px;text-transform:none;letter-spacing:0;font-weight:600}
@@ -429,7 +437,6 @@ b,strong,.b{font-weight:600}
 :root[data-glass] .chip.on,
 :root[data-glass] .starbtn.on,
 :root[data-glass] .btn.noteon,
-:root[data-glass] #tabs .wbtn[aria-current="page"]:not(.live) .wc,
 :root[data-glass] .seg > .ind,
 :root[data-glass] .chips > .ind{background:var(--g-fill-on)!important;color:var(--text)!important;box-shadow:inset 0 1px 0 var(--g-spec),inset 0 -1px 0 var(--g-low),inset 0 0 0 1px var(--g-rim)}
 :root[data-glass] .btn.primary,
@@ -543,6 +550,15 @@ function dDM(t) { var d = new Date(t); return d.getDate() + ' ' + MO[d.getMonth(
 function dWDM(t) { var d = new Date(t); return WD[d.getDay()] + ' ' + d.getDate() + ' ' + MO[d.getMonth()]; }
 function dayStart(t) { var d = new Date(t); d.setHours(0, 0, 0, 0); return +d; }
 function weekStart(t) { var d = new Date(t); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return +d; }
+function weekDots() {
+  var ws = weekStart(Date.now()), today = dayStart(Date.now()), o = '';
+  for (var i = 0; i < 7; i++) {
+    var d0 = addDays(ws, i), d1 = addDays(ws, i + 1);
+    var tr = S.workouts.some(function (w) { return w.start >= d0 && w.start < d1; });
+    o += '<i data-d="' + 'MTWTFSS'[i] + '" class="' + (tr ? 'd' : '') + (d0 === today ? ' t' : '') + '"></i>';
+  }
+  return o;
+}
 function addDays(t, n) { var d = new Date(t); d.setDate(d.getDate() + n); return +d; }
 function pl(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
 function thin(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
@@ -1120,12 +1136,7 @@ function vHome() {
       '<div class="col g6"><span class="eyebrow">No split</span><h1 class="h1 xl">Pick a split</h1></div><div class="col g8"><button class="btn primary block" data-a="tab" data-t="splits">Splits</button></div>';
     hero = '<section class="card pad col g14 hero">' + link + main + '</section>';
   }
-  var ws = weekStart(Date.now()), today = dayStart(Date.now()), dots = '';
-  for (var i = 0; i < 7; i++) {
-    var d0 = addDays(ws, i), d1 = addDays(ws, i + 1);
-    var tr = S.workouts.some(function (w) { return w.start >= d0 && w.start < d1; });
-    dots += '<i class="' + (tr ? 'd' : '') + (d0 === today ? ' t' : '') + '"></i>';
-  }
+  var ws = weekStart(Date.now()), dots = weekDots();
   var st = streak(), last = S.workouts[0];
   var week = '<section class="card col g12" style="padding:16px;border-radius:20px" aria-label="This week">' +
     '<div class="row between g12"><span class="col g2"><b style="font-size:15px">This week</b>' + (st ? '<span class="small muted"><b style="color:var(--accent-text)">' + roll('streak', st) + '</b> week streak</span>' : '') + '</span>' +
@@ -1180,7 +1191,7 @@ function vWorkout() {
         '<div class="scells"><span class="p">' + (prev ? (m === 'cardio' ? mmss(+prev.a || 0) + (+prev.b ? ' × ' + fnum(+prev.b) : '') : fmtSet(prev, m)) : '–') + '</span>' + cellHtml(i, 'A', s, m, M) + (M.b ? cellHtml(i, 'B', s, m, M) : '<span></span>') + '</div>' + circ + '</div>', swAct('setDel', 'data-s="' + i + '"', 'trash', 'Delete', 'del'));
       if (i < ex.sets.length - 1) {
         var on = r && r.e === a.cur && r.s === i;
-        if (U.restEdit === i) rows += '<div class="rpe"><button data-a="restAdj" data-d="-10" aria-label="10 seconds less">−10 s</button><button class="v tnum" data-a="restEdit" data-s="' + i + '" aria-label="Done changing rest">' + mmss(s.rest) + '</button><button data-a="restAdj" data-d="10" aria-label="10 seconds more">+10 s</button></div>';
+        if (U.restEdit === i) rows += '<div class="rpe"><button data-a="restAdj" data-d="10" aria-label="10 seconds more">+10 s</button><button class="v tnum" data-a="restEdit" data-s="' + i + '" aria-label="Done changing rest">' + mmss(s.rest) + '</button><button data-a="restAdj" data-d="-10" aria-label="10 seconds less">−10 s</button></div>';
         else rows += '<div class="rp' + (on ? ' on' : '') + '"><i aria-hidden="true"></i><button data-a="restEdit" data-s="' + i + '" aria-label="Rest ' + mmss(s.rest) + '. Tap to change">' + ic('clock', 14, 2.2) + mmss(s.rest) + '</button><i aria-hidden="true"></i></div>';
       }
     });
@@ -1366,7 +1377,7 @@ function vLibrary() {
   return '<button class="backlink" data-a="back">' + ic('back', 22) + 'Back</button>' + (br ? '<div class="row between"><h1 class="h1">Exercises</h1><button class="iconbtn" data-a="nxOpen" aria-label="New exercise">' + ic('plus', 22, 2.4) + '</button></div>' : '<h1 class="h1">Add exercise</h1>') +
     '<label class="search">' + ic('search') + '<input id="libQ" data-in="libQ" placeholder="Search" autocomplete="off" value="' + esc(L.q) + '" aria-label="Search exercises"></label>' +
     '<div class="chips" role="group" aria-label="Muscle group">' + chips + '</div>' +
-    '<select class="sel" data-ch="libEq" aria-label="Equipment">' + eqs + '</select>' +
+    '<label class="vchip eqpick"><span id="libEqL">' + (L.eq === 'All' ? 'All equipment' : esc(L.eq)) + '</span>' + ic('down', 14, 2.4) + '<select data-ch="libEq" aria-label="Equipment">' + eqs + '</select></label>' +
     '<div id="libList" class="col g14">' + libList() + '</div>' + (L.mode === 'tpl' || L.mode === 'draft' ? libDoneHtml() : '');
 }
 function libRow(x) {
@@ -1431,13 +1442,12 @@ function vSummary() {
   var prs = an.prs.length ? '<section class="col g8"><h2 class="label">' + (an.prs.length === 1 ? 'New PR' : an.prs.length + ' new PRs') + '</h2>' + an.prs.map(function (p) { return '<div class="item" style="min-height:52px"><span class="pr">PR</span><b class="f1">' + esc(p.name) + '</b><b class="tnum">' + esc(p.set) + '</b></div>'; }).join('') + '</section>' : '';
   var pl = an.plateau && !U.plDismiss ? '<section class="card row g10" style="padding:12px 8px 12px 14px;align-items:flex-start;border-radius:14px"><span class="col g4 f1"><b style="font-size:15px">Plateau: ' + esc(an.plateau.name) + '</b><span class="small muted">' + esc(an.plateau.set) + ' three sessions in a row. Try ' + an.plateau.next + ' kg or one more rep.</span></span><button class="iconbtn" style="width:36px;height:36px;background:transparent;color:var(--muted)" data-a="plDismiss" aria-label="Dismiss">' + ic('x', 18, 2.2) + '</button></section>' : '';
   var mus = Object.keys(an.muscles).sort(function (a, b) { return an.muscles[b] - an.muscles[a]; }).map(function (g) { return '<span class="pill">' + g + '<span style="color:var(--accent-text)">' + an.muscles[g] + '</span></span>'; }).join('');
-  var wc = weekCount(weekStart(Date.now())), goal = S.settings.goal, bars = '';
-  for (var i = 0; i < goal; i++) bars += '<i style="height:6px;border-radius:3px;background:' + (i < wc ? 'var(--accent)' : 'var(--card2)') + '"></i>';
+  var wc = weekCount(weekStart(Date.now())), goal = S.settings.goal;
   var upd = U.tplDiff && U.tplDiff.sumId === w.id ? '<section class="card col g12" style="padding:16px;border-radius:20px"><span class="col g2"><b style="font-size:16px">Update ' + esc(w.name) + '?</b><span class="small muted">Save today’s exercises to your split</span></span>' +
     '<div class="grid2"><button class="btn" style="background:var(--card2);min-height:46px" data-a="tplKeep">Keep</button><button class="btn" style="background:var(--accent);color:var(--on-accent);min-height:46px" data-a="tplUpdate">Update</button></div></section>' : '';
   return '<div class="col g6"><span class="eyebrow">Workout complete</span><h1 class="h1" style="font-size:34px">' + esc(w.name) + '</h1><span class="muted small">' + dWDM(w.start) + '</span></div>' + upd + tiles + notesHtml(w) + prs + pl +
     (mus ? '<section class="col g8"><h2 class="label">Muscles hit</h2><div class="row g6" style="flex-wrap:wrap">' + mus + '</div></section>' : '') +
-    '<section class="col g8"><div class="row between"><h2 class="label">This week</h2><span class="tnum" style="font-size:14px"><b>' + wc + '</b> <span class="muted">of ' + goal + '</span></span></div><div style="display:grid;grid-template-columns:repeat(' + goal + ',minmax(0,1fr));gap:4px">' + bars + '</div></section>' +
+    '<section class="col g8"><div class="row between"><h2 class="label">This week</h2><span class="tnum" style="font-size:14px"><b>' + wc + '</b> <span class="muted">of ' + goal + '</span></span></div><span class="dots wide" aria-hidden="true">' + weekDots() + '</span></section>' +
     '<button class="btn primary block mt-auto" data-a="tab" data-t="home">Done</button>';
 }
 
@@ -1611,7 +1621,7 @@ function lineChart(pts, unit, tap) {
   var W = 340, H = 180, L = 40, R = 12, Tp = 26, B = 24;
   var xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
   var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
-  var tk = niceTicks(Math.min.apply(null, ys), Math.max.apply(null, ys), 4), y0 = tk[0], y1 = tk[tk.length - 1];
+  var mn = Math.min.apply(null, ys), mx = Math.max.apply(null, ys), pd = Math.max(0, (Math.max(2, mx * 0.04) - (mx - mn)) / 2), tk = niceTicks(mn - pd, mx + pd, 2), y0 = tk[0], y1 = tk[tk.length - 1];
   function X(x) { return L + (x1 === x0 ? 0.5 : (x - x0) / (x1 - x0)) * (W - L - R); }
   function Y(y) { return Tp + (1 - (y - y0) / (y1 - y0)) * (H - Tp - B); }
   var line = pts.map(function (p, i) { return (i ? 'L' : 'M') + X(p.x).toFixed(1) + ' ' + Y(p.y).toFixed(1); }).join(' ');
@@ -1742,7 +1752,7 @@ function vSettings() {
     '<div class="row between"><span class="f1" style="font-size:15px">Sound when rest ends</span><button class="switch' + (s.sound ? ' on' : '') + '" role="switch" aria-checked="' + s.sound + '" aria-label="Sound when rest ends" data-a="sSound"><i></i></button></div>' +
     '<div class="row between"><span class="f1" style="font-size:15px">Haptics</span><button class="switch' + (s.haptics !== false ? ' on' : '') + '" role="switch" aria-checked="' + (s.haptics !== false) + '" aria-label="Haptics" data-a="sHaptics"><i></i></button></div></div></section>' +
     '<section class="col g6"><h2 class="label">Muscle groups to track</h2><div class="row g6" style="flex-wrap:wrap">' + MGROUPS.map(function (g) { var on = s.tracked.indexOf(g) >= 0; return '<button class="chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-a="sTrack" data-g="' + g + '">' + g + '</button>'; }).join('') + '</div></section>' +
-    '<section class="col g6"><h2 class="label">Appearance</h2><div class="group" style="margin-bottom:10px"><div class="row between"><span class="f1" style="font-size:15px">Background animation</span><button class="switch' + (s.aura !== false ? ' on' : '') + '" role="switch" aria-checked="' + (s.aura !== false) + '" aria-label="Background animation" data-a="sAura"><i></i></button></div><div class="row between"><span class="f1" style="font-size:15px">Glass buttons</span><button class="switch' + (s.glass !== false ? ' on' : '') + '" role="switch" aria-checked="' + (s.glass !== false) + '" aria-label="Glass buttons" data-a="sGlass"><i></i></button></div></div><span class="small muted" style="margin:4px 4px 0">Font</span><div class="wsel" role="radiogroup" aria-label="Font" style="margin-bottom:10px">' + [['classic', 'Arial', 'Arial,Helvetica,sans-serif'], ['sf', 'SF Pro', '-apple-system,BlinkMacSystemFont,system-ui,sans-serif'], ['geist', 'Geist', "'Geist',-apple-system,system-ui,sans-serif"]].map(function (f) { var on = (s.font || 'classic') === f[0]; return '<button role="radio" aria-checked="' + on + '" class="' + (on ? 'on' : '') + '" data-a="sFont" data-f="' + f[0] + '"><span class="aa" style="font-family:' + f[2].replace(/"/g, '') + '">Aa</span>' + f[1] + '</button>'; }).join('') + '</div><span class="small muted" style="margin:4px 4px 0">Weight</span><div class="wsel two" role="radiogroup" aria-label="Weight" style="margin-bottom:10px">' + [['bold', 'Bold', 700], ['book', 'Book', 400]].map(function (w) { var on = (s.weight === 'book' ? 'book' : 'bold') === w[0]; return '<button role="radio" aria-checked="' + on + '" class="' + (on ? 'on' : '') + '" data-a="sWeight" data-w="' + w[0] + '"><span class="aa" style="font-weight:' + w[2] + '!important">Aa</span>' + w[1] + '</button>'; }).join('') + '</div><span class="small muted" style="margin:4px 4px 0">Theme</span><div class="themes" role="radiogroup" aria-label="Theme">' + themes.map(function (t) { var on = (s.theme || 'teal') === t[0]; return '<button role="radio" aria-checked="' + on + '" class="' + (on ? 'on' : '') + '" data-a="sTheme" data-t="' + t[0] + '"><span class="sw" style="background:' + t[2] + ';box-shadow:' + (on ? '0 0 0 2px var(--text)' : 'inset 0 0 0 1px var(--line)') + '"><i style="flex:1;background:' + t[3] + '"></i><i style="width:12px;background:' + t[4] + '"></i></span>' + t[1] + '</button>'; }).join('') + '</div></section>' +
+    '<section class="col g6"><h2 class="label">Appearance</h2><div class="group" style="margin-bottom:10px">' + (s.theme === 'silver' ? '' : '<div class="row between"><span class="f1" style="font-size:15px">Background animation</span><button class="switch' + (s.aura !== false ? ' on' : '') + '" role="switch" aria-checked="' + (s.aura !== false) + '" aria-label="Background animation" data-a="sAura"><i></i></button></div>') + '<div class="row between"><span class="f1" style="font-size:15px">Glass buttons</span><button class="switch' + (s.glass !== false ? ' on' : '') + '" role="switch" aria-checked="' + (s.glass !== false) + '" aria-label="Glass buttons" data-a="sGlass"><i></i></button></div></div><span class="small muted" style="margin:4px 4px 0">Font</span><div class="wsel" role="radiogroup" aria-label="Font" style="margin-bottom:10px">' + [['classic', 'Arial', 'Arial,Helvetica,sans-serif'], ['sf', 'SF Pro', '-apple-system,BlinkMacSystemFont,system-ui,sans-serif'], ['geist', 'Geist', "'Geist',-apple-system,system-ui,sans-serif"]].map(function (f) { var on = (s.font || 'classic') === f[0]; return '<button role="radio" aria-checked="' + on + '" class="' + (on ? 'on' : '') + '" data-a="sFont" data-f="' + f[0] + '"><span class="aa" style="font-family:' + f[2].replace(/"/g, '') + '">Aa</span>' + f[1] + '</button>'; }).join('') + '</div><span class="small muted" style="margin:4px 4px 0">Weight</span><div class="wsel two" role="radiogroup" aria-label="Weight" style="margin-bottom:10px">' + [['bold', 'Bold', 700], ['book', 'Book', 400]].map(function (w) { var on = (s.weight === 'book' ? 'book' : 'bold') === w[0]; return '<button role="radio" aria-checked="' + on + '" class="' + (on ? 'on' : '') + '" data-a="sWeight" data-w="' + w[0] + '"><span class="aa" style="font-weight:' + w[2] + '!important">Aa</span>' + w[1] + '</button>'; }).join('') + '</div><span class="small muted" style="margin:4px 4px 0">Theme</span><div class="themes" role="radiogroup" aria-label="Theme">' + themes.map(function (t) { var on = (s.theme || 'teal') === t[0]; return '<button role="radio" aria-checked="' + on + '" class="' + (on ? 'on' : '') + '" data-a="sTheme" data-t="' + t[0] + '"><span class="sw" style="background:' + t[2] + ';box-shadow:inset 0 0 0 1px var(--line)"><i style="background:' + t[3] + '"></i></span>' + t[1] + '</button>'; }).join('') + '</div></section>' +
     (S.custom.some(function (c) { return !c.hidden && !c.override && false; }) ? '<section class="col g6"><h2 class="label">My exercises</h2><div class="col g6">' + S.custom.filter(function (c) { return !c.hidden; }).map(function (c) {
       return swipeRow('<div class="item" style="min-height:56px"><span class="col g2 f1"><b>' + esc(c.n) + '</b><span class="small muted">' + esc(c.g) + SEP + c.v.map(esc).join(SEP) + '</span></span></div>', swAct('cxDel', 'data-x="' + c.id + '"', 'trash', 'Delete', 'del'));
     }).join('') + '</div></section>' : '') +
@@ -2281,7 +2291,7 @@ document.addEventListener('input', function (ev) {
 document.addEventListener('change', function (ev) {
   var t = ev.target;
   if (t.dataset.ed) { U.sel = null; lazyRender(); }
-  else if (t.dataset.ch === 'libEq') { U.lib.eq = t.value; var l = $('#libList'); if (l) l.innerHTML = libList(); }
+  else if (t.dataset.ch === 'libEq') { U.lib.eq = t.value; var el = $('#libEqL'); if (el) el.textContent = t.value === 'All' ? 'All equipment' : t.value; var l = $('#libList'); if (l) l.innerHTML = libList(); }
   else if (t.dataset.ch === 'pKey') { U.pKey = t.value; render(); }
   else if (t.dataset.ch === 'importFile') {
     var file = t.files && t.files[0]; t.value = ''; if (!file) return;
