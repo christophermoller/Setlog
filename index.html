@@ -106,6 +106,10 @@ button:disabled{opacity:.4;cursor:default}
 .ta:focus{box-shadow:inset 0 0 0 1.5px var(--accent)}
 .notep{align-self:flex-start;max-width:100%;border:0;background:none;padding:0;color:var(--muted);font-size:14px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .btn.noteon{background:var(--accent)!important;color:var(--on-accent)}
+.nlast{display:flex;flex-direction:column;gap:8px;padding-top:14px;border-top:1px solid color-mix(in srgb,var(--text) 14%,transparent)}
+.nlast-m{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;font-weight:600;color:var(--muted)}
+.nlast-m b{display:flex;gap:10px;font-weight:600;color:var(--text);opacity:.9}.nlast-m b span:first-child:not(:last-child){color:var(--muted)}
+.nlast p{margin:0;font-size:15px;line-height:1.45;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
 .notes{display:flex;flex-direction:column;border-radius:16px;background:var(--card);overflow:hidden}
 .nsec{display:flex;flex-direction:column;gap:4px;border:0;background:none;color:var(--text);text-align:left;padding:12px 14px}
 .nsec + .nsec{box-shadow:inset 0 1px 0 var(--line)}
@@ -1349,8 +1353,25 @@ function shPick() {
 function shNoteEx() {
   var ex = curEx(); if (!ex) return '';
   return '<div class="col g4"><span class="eyebrow">Note</span><h2 class="h2">' + esc(exName(ex.exId)) + '</h2></div>' +
-    '<textarea id="noteIn" class="ta" data-in="noteEx" rows="5" placeholder="How did it go">' + esc(ex.note || '') + '</textarea>' +
-    '<button class="btn primary block" data-a="closeSheet">Done</button>';
+    '<textarea id="noteIn" class="ta" data-in="noteEx" rows="4" placeholder="How did it go" style="min-height:104px">' + esc(ex.note || '') + '</textarea>' +
+    lastNoteHtml(ex) +
+    '<button class="btn block" style="background:var(--card2)" data-a="closeSheet">Done</button>';
+}
+function lastNote(exId) {
+  var best = null;
+  S.workouts.forEach(function (w) {
+    (w.notes || []).forEach(function (n) {
+      if (!n.text || !n.text.trim() || (n.ex || []).indexOf(exId) < 0) return;
+      if (!best || w.start > best.w.start) best = { w: w, n: n };
+    });
+  });
+  return best;
+}
+function lastNoteHtml(ex) {
+  var l = lastNote(ex.exId); if (!l) return '';
+  var we = (l.w.exercises || []).filter(function (e) { return e.exId === ex.exId; })[0];
+  var vr = we && we.variant && we.variant !== ex.variant ? '<span>' + esc(we.variant) + '</span>' : '';
+  return '<div class="nlast"><div class="nlast-m"><span>Last time</span><b>' + vr + '<span>' + dWDM(l.w.start) + '</span></b></div><p>' + esc(l.n.text.trim()) + '</p></div>';
 }
 function shNote() {
   var c = U.noteCtx, w = c && S.workouts.filter(function (x) { return x.id === c.wid; })[0]; if (!w) return '';
